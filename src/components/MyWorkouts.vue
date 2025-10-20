@@ -38,10 +38,11 @@
   </template>
   
   <script setup>
+  import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'
+  import { db } from '../firebase'
   import { ref, onMounted } from 'vue'
   import { db } from '../firebase'
-  import { collection, addDoc, query, where, getDocs, orderBy } from 'firebase/firestore'
-  import { useAuth } from '../composables/useAuth'
+
   
   const { user } = useAuth()
   
@@ -52,25 +53,26 @@
   const weight = ref(0)
   const workouts = ref([])
   
-  // Firestore collection reference
   const workoutsCollection = collection(db, 'workouts')
   
-  // Load workouts for current user
   const loadWorkouts = async () => {
-    if (!user.value) return
+  if (!user.value) return
+
+  const workoutsCollection = collection(db, 'workouts')
+  const q = query(
+    workoutsCollection,
+    where('uid', '==', user.value.uid),
+    orderBy('date', 'desc')
+  )
+  const snapshot = await getDocs(q)
+  workouts.value = snapshot.docs.map(doc => doc.data())
+}
   
-    const q = query(
-      workoutsCollection,
-      where('uid', '==', user.value.uid),
-      orderBy('date', 'desc')
-    )
-  
-    const snapshot = await getDocs(q)
-    workouts.value = snapshot.docs.map(doc => doc.data())
-  }
-  
-  // Call on component mount
-  onMounted(loadWorkouts)
+import { watch } from 'vue'
+
+watch(user, (u) => {
+  if (u) loadWorkouts()
+})
   
   // Add new workout to Firestore
   const addWorkout = async () => {
