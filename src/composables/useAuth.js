@@ -1,4 +1,3 @@
-// src/composables/useAuth.js
 import { ref } from 'vue'
 import { auth } from '../firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
@@ -7,7 +6,6 @@ import { onAuthStateChanged } from 'firebase/auth'
 const user = ref(null)
 const loading = ref(true)
 
-// Listen for auth state changes
 onAuthStateChanged(auth, u => {
   user.value = u
   loading.value = false
