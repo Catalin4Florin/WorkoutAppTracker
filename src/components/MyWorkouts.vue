@@ -1,7 +1,7 @@
 <template>
     <div class="my-workouts">
       <h1>My Workouts</h1>
-      
+  
       <button @click="showForm = !showForm">
         {{ showForm ? 'Cancel' : 'Add New Workout' }}
       </button>
@@ -38,43 +38,46 @@
   </template>
   
   <script setup>
-  import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'
+  import { ref, watch } from 'vue'
   import { db } from '../firebase'
-  import { ref, onMounted } from 'vue'
-  import { db } from '../firebase'
-
+  import { collection, addDoc, getDocs, query, where, orderBy } from 'firebase/firestore'
+  import { useAuth } from '../composables/useAuth'
   
   const { user } = useAuth()
   
+  // Form state
   const showForm = ref(false)
   const exerciseName = ref('')
   const sets = ref(3)
   const reps = ref(10)
   const weight = ref(0)
+  
+  // Workouts array
   const workouts = ref([])
   
+  // Firestore collection reference
   const workoutsCollection = collection(db, 'workouts')
   
+  // Function to load workouts for logged-in user
   const loadWorkouts = async () => {
-  if (!user.value) return
-
-  const workoutsCollection = collection(db, 'workouts')
-  const q = query(
-    workoutsCollection,
-    where('uid', '==', user.value.uid),
-    orderBy('date', 'desc')
-  )
-  const snapshot = await getDocs(q)
-  workouts.value = snapshot.docs.map(doc => doc.data())
-}
+    if (!user.value) return
   
-import { watch } from 'vue'
-
-watch(user, (u) => {
-  if (u) loadWorkouts()
-})
+    const q = query(
+      workoutsCollection,
+      where('uid', '==', user.value.uid),
+      orderBy('date', 'desc')
+    )
   
-  // Add new workout to Firestore
+    const snapshot = await getDocs(q)
+    workouts.value = snapshot.docs.map(doc => doc.data())
+  }
+  
+  // Watch user and load workouts when available
+  watch(user, (u) => {
+    if (u) loadWorkouts()
+  })
+  
+  // Add workout to Firestore
   const addWorkout = async () => {
     if (!user.value) return
   
@@ -90,9 +93,9 @@ watch(user, (u) => {
     }
   
     await addDoc(workoutsCollection, newWorkout)
-    workouts.value.unshift(newWorkout) // add to local list
+    workouts.value.unshift(newWorkout)
   
-    // reset form
+    // Reset form
     exerciseName.value = ''
     sets.value = 3
     reps.value = 10
