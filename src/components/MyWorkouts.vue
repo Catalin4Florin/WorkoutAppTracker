@@ -1,6 +1,8 @@
 <template>
   <div class="my-workouts">
     <h1>My Workouts</h1>
+    <button v-if="user" @click="logout">Logout</button>
+
 
     <!-- Add / Cancel Workout Button -->
     <button @click="showForm = !showForm">
@@ -85,6 +87,23 @@ import { ref, onMounted, watch } from 'vue'
 import { db } from '../firebase'
 import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { useAuth } from '../composables/useAuth'
+import { getAuth, signOut } from 'firebase/auth'
+
+const auth = getAuth()
+
+const logout = async () => {
+  try {
+    await signOut(auth)
+    console.log('User logged out')
+    // Optionally reset local state
+    exercises.value = []
+    workouts.value = []
+    editingWorkout.value = null
+    showForm.value = false
+  } catch (err) {
+    console.error('Error logging out:', err)
+  }
+}
 
 const { user, loading } = useAuth()
 
