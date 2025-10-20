@@ -11,23 +11,45 @@
     <div v-if="showForm" class="new-workout-form">
       <h2>{{ editingWorkout ? 'Edit Workout' : 'New Workout' }}</h2>
 
+      <!-- Exercise Form -->
       <div v-for="(exercise, index) in exercises" :key="index" class="exercise-form">
         <label>
-          Name:
-          <input v-model="exercise.name" type="text" placeholder="Exercise Name" />
+          Muscle Group:
+          <select v-model="exercise.muscle">
+            <option value="">Select Muscle</option>
+            <option v-for="group in muscleGroups" :key="group" :value="group">{{ group }}</option>
+          </select>
         </label>
+
+        <label>
+          Exercise:
+          <select v-model="exercise.name">
+            <option disabled value="">Select Exercise</option>
+            <option
+              v-for="ex in exerciseOptions.filter(e => e.muscle === exercise.muscle)"
+              :key="ex.name"
+              :value="ex.name"
+            >
+              {{ ex.name }}
+            </option>
+          </select>
+        </label>
+
         <label>
           Sets:
           <input v-model.number="exercise.sets" type="number" min="1" />
         </label>
+
         <label>
           Reps:
           <input v-model.number="exercise.reps" type="number" min="1" />
         </label>
+
         <label>
           Weight:
           <input v-model.number="exercise.weight" type="number" min="0" />
         </label>
+
         <button @click="removeExercise(index)">Remove Exercise</button>
         <hr />
       </div>
@@ -44,7 +66,7 @@
           <strong>{{ w.date }}</strong>
           <ul>
             <li v-for="(ex, i) in w.exercises" :key="i">
-              {{ ex.name }}: {{ ex.sets }}x{{ ex.reps }} @ {{ ex.weight }}kg
+              {{ ex.muscle }} — {{ ex.name }}: {{ ex.sets }}x{{ ex.reps }} @ {{ ex.weight }}kg
             </li>
           </ul>
           <button @click="startEditWorkout(w)">Edit</button>
@@ -63,20 +85,40 @@ import { useAuth } from '../composables/useAuth'
 
 const { user, loading } = useAuth()
 
+// ----------------------
+// Exercise Options
+// ----------------------
+const exerciseOptions = [
+  { name: 'Bench Press', muscle: 'Chest' },
+  { name: 'Incline Dumbbell Press', muscle: 'Chest' },
+  { name: 'Squat', muscle: 'Legs' },
+  { name: 'Deadlift', muscle: 'Back' },
+  { name: 'Pull-Up', muscle: 'Back' },
+  { name: 'Overhead Press', muscle: 'Shoulders' },
+  { name: 'Bicep Curl', muscle: 'Arms' },
+  { name: 'Tricep Pushdown', muscle: 'Arms' }
+]
+
+const muscleGroups = ['Chest', 'Legs', 'Back', 'Shoulders', 'Arms']
+
+// ----------------------
 // Form state
+// ----------------------
 const showForm = ref(false)
 const exercises = ref([])
 const editingWorkout = ref(null)
 
-// Workouts array
+// ----------------------
+// Workouts state
+// ----------------------
 const workouts = ref([])
-
-// Firestore collection
 const workoutsCollection = collection(db, 'workouts')
 
-// --- Form functions ---
+// ----------------------
+// Form functions
+// ----------------------
 const addExercise = () => {
-  exercises.value.push({ name: '', sets: 3, reps: 10, weight: 0 })
+  exercises.value.push({ muscle: '', name: '', sets: 3, reps: 10, weight: 0 })
 }
 
 const removeExercise = (index) => {
@@ -94,12 +136,10 @@ const saveWorkout = async () => {
 
   try {
     if (editingWorkout.value) {
-      // Update existing workout
       const workoutRef = doc(db, 'workouts', editingWorkout.value.id)
       await updateDoc(workoutRef, { exercises: exercises.value })
       editingWorkout.value = null
     } else {
-      // Add new workout
       const newWorkout = {
         uid: user.value.uid,
         date: new Date().toISOString(),
@@ -108,10 +148,7 @@ const saveWorkout = async () => {
       await addDoc(workoutsCollection, newWorkout)
     }
 
-    // Reload workouts
     await loadWorkouts()
-
-    // Reset form
     exercises.value = []
     showForm.value = false
   } catch (err) {
@@ -119,7 +156,6 @@ const saveWorkout = async () => {
   }
 }
 
-// --- Delete workout ---
 const deleteWorkout = async (id) => {
   try {
     await deleteDoc(doc(db, 'workouts', id))
@@ -129,7 +165,9 @@ const deleteWorkout = async (id) => {
   }
 }
 
-// --- Load workouts ---
+// ----------------------
+// Load workouts
+// ----------------------
 const loadWorkouts = async () => {
   if (!user.value) return
 
@@ -153,7 +191,9 @@ const loadWorkouts = async () => {
   }
 }
 
-// --- Watch user and loading ---
+// ----------------------
+// Watch auth state
+// ----------------------
 onMounted(() => {
   watch([user, loading], ([u, isLoading]) => {
     if (!isLoading && u) loadWorkouts()
@@ -179,5 +219,9 @@ onMounted(() => {
   padding: 10px;
   margin-bottom: 5px;
   border-radius: 5px;
+}
+select, input {
+  flex: 1;
+  margin-left: 10px;
 }
 </style>
