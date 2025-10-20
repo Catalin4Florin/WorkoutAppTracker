@@ -12,7 +12,7 @@
       <h2>{{ editingWorkout ? 'Edit Workout' : 'New Workout' }}</h2>
 
       <!-- Exercise Form -->
-      <div v-for="(exercise, index) in exercises" :key="index" class="exercise-form">
+      <div v-for="(exercise, exIndex) in exercises" :key="exIndex" class="exercise-form">
         <label>
           Muscle Group:
           <select v-model="exercise.muscle">
@@ -35,22 +35,21 @@
           </select>
         </label>
 
-        <label>
-          Sets:
-          <input v-model.number="exercise.sets" type="number" min="1" />
-        </label>
+        <!-- Sets -->
+        <div v-for="(set, setIndex) in exercise.sets" :key="setIndex" class="set-input">
+          <label>
+            Reps:
+            <input v-model.number="set.reps" type="number" min="1" />
+          </label>
+          <label>
+            Weight:
+            <input v-model.number="set.weight" type="number" min="0" />
+          </label>
+          <button @click="removeSet(exIndex, setIndex)">Remove Set</button>
+        </div>
 
-        <label>
-          Reps:
-          <input v-model.number="exercise.reps" type="number" min="1" />
-        </label>
-
-        <label>
-          Weight:
-          <input v-model.number="exercise.weight" type="number" min="0" />
-        </label>
-
-        <button @click="removeExercise(index)">Remove Exercise</button>
+        <button @click="addSet(exIndex)">Add Set</button>
+        <button @click="removeExercise(exIndex)">Remove Exercise</button>
         <hr />
       </div>
 
@@ -66,7 +65,11 @@
           <strong>{{ w.date }}</strong>
           <ul>
             <li v-for="(ex, i) in w.exercises" :key="i">
-              {{ ex.muscle }} — {{ ex.name }}: {{ ex.sets }}x{{ ex.reps }} @ {{ ex.weight }}kg
+              {{ ex.muscle }} — {{ ex.name }}:
+              <span v-for="(set, si) in ex.sets" :key="si">
+                {{ set.reps }}x{{ set.weight }}kg
+                <span v-if="si < ex.sets.length - 1">, </span>
+              </span>
             </li>
           </ul>
           <button @click="startEditWorkout(w)">Edit</button>
@@ -85,9 +88,7 @@ import { useAuth } from '../composables/useAuth'
 
 const { user, loading } = useAuth()
 
-// ----------------------
 // Exercise Options
-// ----------------------
 const exerciseOptions = [
   { name: 'Bench Press', muscle: 'Chest' },
   { name: 'Incline Dumbbell Press', muscle: 'Chest' },
@@ -101,33 +102,35 @@ const exerciseOptions = [
 
 const muscleGroups = ['Chest', 'Legs', 'Back', 'Shoulders', 'Arms']
 
-// ----------------------
 // Form state
-// ----------------------
 const showForm = ref(false)
 const exercises = ref([])
 const editingWorkout = ref(null)
 
-// ----------------------
 // Workouts state
-// ----------------------
 const workouts = ref([])
 const workoutsCollection = collection(db, 'workouts')
 
-// ----------------------
 // Form functions
-// ----------------------
 const addExercise = () => {
-  exercises.value.push({ muscle: '', name: '', sets: 3, reps: 10, weight: 0 })
+  exercises.value.push({ muscle: '', name: '', sets: [{ reps: 10, weight: 0 }] })
 }
 
 const removeExercise = (index) => {
   exercises.value.splice(index, 1)
 }
 
+const addSet = (exIndex) => {
+  exercises.value[exIndex].sets.push({ reps: 10, weight: 0 })
+}
+
+const removeSet = (exIndex, setIndex) => {
+  exercises.value[exIndex].sets.splice(setIndex, 1)
+}
+
 const startEditWorkout = (workout) => {
   editingWorkout.value = { ...workout }
-  exercises.value = workout.exercises.map(ex => ({ ...ex }))
+  exercises.value = workout.exercises.map(ex => ({ ...ex, sets: ex.sets.map(s => ({ ...s })) }))
   showForm.value = true
 }
 
@@ -165,9 +168,7 @@ const deleteWorkout = async (id) => {
   }
 }
 
-// ----------------------
 // Load workouts
-// ----------------------
 const loadWorkouts = async () => {
   if (!user.value) return
 
@@ -191,9 +192,7 @@ const loadWorkouts = async () => {
   }
 }
 
-// ----------------------
 // Watch auth state
-// ----------------------
 onMounted(() => {
   watch([user, loading], ([u, isLoading]) => {
     if (!isLoading && u) loadWorkouts()
@@ -219,6 +218,11 @@ onMounted(() => {
   padding: 10px;
   margin-bottom: 5px;
   border-radius: 5px;
+}
+.set-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
 }
 select, input {
   flex: 1;
