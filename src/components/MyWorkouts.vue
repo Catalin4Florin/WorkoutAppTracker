@@ -38,7 +38,12 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
+  import { db } from '../firebase'
+  import { collection, addDoc, query, where, getDocs, orderBy } from 'firebase/firestore'
+  import { useAuth } from '../composables/useAuth'
+  
+  const { user } = useAuth()
   
   const showForm = ref(false)
   const exerciseName = ref('')
@@ -47,15 +52,43 @@
   const weight = ref(0)
   const workouts = ref([])
   
-  const addWorkout = () => {
+  // Firestore collection reference
+  const workoutsCollection = collection(db, 'workouts')
+  
+  // Load workouts for current user
+  const loadWorkouts = async () => {
+    if (!user.value) return
+  
+    const q = query(
+      workoutsCollection,
+      where('uid', '==', user.value.uid),
+      orderBy('date', 'desc')
+    )
+  
+    const snapshot = await getDocs(q)
+    workouts.value = snapshot.docs.map(doc => doc.data())
+  }
+  
+  // Call on component mount
+  onMounted(loadWorkouts)
+  
+  // Add new workout to Firestore
+  const addWorkout = async () => {
+    if (!user.value) return
+  
     const date = new Date().toLocaleDateString()
-    workouts.value.push({
+  
+    const newWorkout = {
+      uid: user.value.uid,
       date,
       exerciseName: exerciseName.value,
       sets: sets.value,
       reps: reps.value,
       weight: weight.value
-    })
+    }
+  
+    await addDoc(workoutsCollection, newWorkout)
+    workouts.value.unshift(newWorkout) // add to local list
   
     // reset form
     exerciseName.value = ''
