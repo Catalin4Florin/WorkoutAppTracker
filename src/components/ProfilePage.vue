@@ -1,100 +1,119 @@
 <template>
-    <div class="profile-background">
+    <div class="profile-container">
       <div class="profile-card">
-        <h1>User Profile</h1>
+        <h2>User Profile</h2>
   
-        <div v-if="userData">
-          <p><strong>Email:</strong> {{ user.email }}</p>
-          <p><strong>Nickname:</strong> 
-            <input v-model="nickname" class="nickname-input" />
-            <button @click="updateNickname">Save</button>
-          </p>
-          <p><strong>Total Workouts:</strong> {{ userData.totalWorkouts }}</p>
-          <p><strong>Total Weight Lifted:</strong> {{ userData.totalWeight }} kg</p>
+        <div v-if="loadingProfile">Loading profile...</div>
+  
+        <div v-else-if="profile">
+          <p><strong>Email:</strong> {{ user?.email }}</p>
+  
+          <label>
+            <strong>Nickname:</strong>
+            <input v-model="profile.nickname" type="text" />
+          </label>
+          <button @click="saveNickname">Save</button>
+  
+          <p><strong>Total Workouts:</strong> {{ profile.totalWorkouts }}</p>
+          <p><strong>Total Weight Lifted:</strong> {{ profile.totalWeight }} kg</p>
         </div>
   
         <div v-else>
-          <p>Loading profile...</p>
+          <p>No profile data found.</p>
         </div>
       </div>
     </div>
   </template>
   
   <script setup>
-  import { ref, onMounted, onUnmounted } from 'vue'
+  import { ref, onMounted, watch } from 'vue'
   import { db } from '../firebase'
-  import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
   import { useAuth } from '../composables/useAuth'
+  import { doc, getDoc, updateDoc } from 'firebase/firestore'
   
-  const { user } = useAuth()
-  const userData = ref(null)
-  const nickname = ref('')
+  const { user, loading } = useAuth()
+  const profile = ref(null)
+  const loadingProfile = ref(true)
   
-  // Listen for real-time updates to user profile
-  let unsubscribe = null
-  
-  onMounted(() => {
-    if (user.value) {
-      const userRef = doc(db, 'users', user.value.uid)
-  
-      unsubscribe = onSnapshot(userRef, (snapshot) => {
-        if (snapshot.exists()) {
-          userData.value = snapshot.data()
-          nickname.value = snapshot.data().nickname || ''
-          console.log('👂 Live profile update:', snapshot.data())
-        } else {
-          console.warn('No profile document found for user')
-        }
-      })
-    }
-  })
-  
-  onUnmounted(() => {
-    if (unsubscribe) unsubscribe()
-  })
-  
-  // Update nickname manually
-  const updateNickname = async () => {
+  const loadUserProfile = async () => {
     if (!user.value) return
     try {
       const userRef = doc(db, 'users', user.value.uid)
-      await updateDoc(userRef, { nickname: nickname.value })
-      console.log('✅ Nickname updated:', nickname.value)
+      const snapshot = await getDoc(userRef)
+      if (snapshot.exists()) {
+        profile.value = snapshot.data()
+      } else {
+        console.warn('No user profile found in Firestore.')
+      }
     } catch (err) {
-      console.error('Error updating nickname:', err)
+      console.error('Error loading profile:', err)
+    } finally {
+      loadingProfile.value = false
+    }
+  }
+  
+  watch(
+    [user, loading],
+    ([u, isLoading]) => {
+      if (!isLoading && u) {
+        loadUserProfile()
+      }
+    },
+    { immediate: true }
+  )
+  
+  const saveNickname = async () => {
+    if (!user.value || !profile.value) return
+    try {
+      const userRef = doc(db, 'users', user.value.uid)
+      await updateDoc(userRef, { nickname: profile.value.nickname })
+      alert('Nickname updated!')
+    } catch (err) {
+      console.error('Error saving nickname:', err)
     }
   }
   </script>
   
   <style scoped>
-  .profile-background {
-    background-image: url('/gym-bg.jpg'); /* change to your image path */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh;
+  .profile-container {
+    background-color: black;
+    color: white;
     width: 100vw;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
   }
   
   .profile-card {
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: rgba(0, 0, 0, 0.85);
     padding: 30px;
     border-radius: 12px;
-    color: white;
+    text-align: center;
     width: 400px;
-    text-align: left;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
   }
   
-  .nickname-input {
-    margin-right: 10px;
+  input {
+    background: #222;
+    border: 1px solid #555;
+    color: white;
     border-radius: 6px;
-    padding: 5px;
+    padding: 6px;
+    margin-left: 8px;
+  }
+  
+  button {
+    background: #333;
     border: none;
-    font-size: 1rem;
+    border-radius: 8px;
+    color: white;
+    padding: 8px 12px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background: #444;
   }
   </style>
   
