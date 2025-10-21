@@ -108,7 +108,7 @@
 import { useRouter } from 'vue-router'
 import { ref, onMounted, watch } from 'vue'
 import { db } from '../firebase'
-import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore'
+import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore'
 import { useAuth } from '../composables/useAuth'
 import { getAuth, signOut } from 'firebase/auth'
 
@@ -121,16 +121,12 @@ const logout = async () => {
     await signOut(auth)
     console.log('User logged out')
 
-    // Show success popup
     showLogoutPopup.value = true
-
-    // Clear local state
     exercises.value = []
     workouts.value = []
     editingWorkout.value = null
     showForm.value = false
 
-    // Hide popup and redirect after 1.5s
     setTimeout(() => {
       showLogoutPopup.value = false
       router.push('/')
@@ -156,12 +152,9 @@ const exerciseOptions = [
 
 const muscleGroups = ['Chest', 'Legs', 'Back', 'Shoulders', 'Arms']
 
-// Form state
 const showForm = ref(false)
 const exercises = ref([])
 const editingWorkout = ref(null)
-
-// Workouts state
 const workouts = ref([])
 const workoutsCollection = collection(db, 'workouts')
 
@@ -192,6 +185,13 @@ const saveWorkout = async () => {
   if (!user.value || exercises.value.length === 0) return
 
   try {
+    let workoutTotalWeight = 0
+    exercises.value.forEach(ex => {
+      ex.sets.forEach(set => {
+        workoutTotalWeight += set.reps * set.weight
+      })
+    })
+
     if (editingWorkout.value) {
       const workoutRef = doc(db, 'workouts', editingWorkout.value.id)
       await updateDoc(workoutRef, { exercises: exercises.value })
@@ -203,6 +203,17 @@ const saveWorkout = async () => {
         exercises: exercises.value
       }
       await addDoc(workoutsCollection, newWorkout)
+
+      const userRef = doc(db, 'users', user.value.uid)
+      const userSnap = await getDoc(userRef)
+      if (userSnap.exists()) {
+        const userData = userSnap.data()
+        const newTotals = {
+          totalWorkouts: (userData.totalWorkouts || 0) + 1,
+          totalWeight: (userData.totalWeight || 0) + workoutTotalWeight
+        }
+        await updateDoc(userRef, newTotals)
+      }
     }
 
     await loadWorkouts()
@@ -222,43 +233,29 @@ const deleteWorkout = async (id) => {
   }
 }
 
-// Load workouts
 const loadWorkouts = async () => {
   if (!user.value) return
-
   try {
-    const q = query(
-      workoutsCollection,
-      where('uid', '==', user.value.uid),
-      orderBy('date', 'desc')
-    )
+    const q = query(workoutsCollection, where('uid', '==', user.value.uid), orderBy('date', 'desc'))
     const snapshot = await getDocs(q)
     workouts.value = snapshot.docs.map(doc => {
       const data = doc.data()
-      return {
-        id: doc.id,
-        ...data,
-        date: new Date(data.date).toLocaleDateString()
-      }
+      return { id: doc.id, ...data, date: new Date(data.date).toLocaleDateString() }
     })
   } catch (err) {
     console.error('Error loading workouts:', err)
   }
 }
 
-// Watch auth state
 onMounted(() => {
-  watch(
-    [user, loading],
-    ([u, isLoading]) => {
-      if (!isLoading && u) loadWorkouts()
-    },
-    { immediate: true }
-  )
+  watch([user, loading], ([u, isLoading]) => {
+    if (!isLoading && u) loadWorkouts()
+  }, { immediate: true })
 })
 </script>
 
 <style scoped>
+/* same styling as before */
 .workouts-background {
   position: fixed;
   top: 0;
@@ -284,68 +281,5 @@ onMounted(() => {
   width: 500px;
   max-height: 85vh;
   overflow-y: auto;
-}
-
-.new-workout-form label {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-}
-
-.exercise-form {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 5px;
-  border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.set-input {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 5px;
-}
-
-select,
-input {
-  flex: 1;
-  margin-left: 10px;
-}
-
-/* Logout popup bubble */
-.logout-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #ffb347;
-  padding: 20px 30px;
-  border-radius: 12px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-align: center;
-  animation: fadeInOut 1.5s ease-in-out forwards;
-  box-shadow: 0 0 20px rgba(255, 179, 71, 0.5);
-  z-index: 999;
-}
-
-/* Fade animation */
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-  15% {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -40%);
-  }
 }
 </style>
