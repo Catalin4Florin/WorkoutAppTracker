@@ -100,6 +100,10 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 import { ref, onMounted, watch } from 'vue'
 import { db } from '../firebase'
 import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore'
@@ -112,14 +116,20 @@ const logout = async () => {
   try {
     await signOut(auth)
     console.log('User logged out')
+
+    // Clear all local state
     exercises.value = []
     workouts.value = []
     editingWorkout.value = null
     showForm.value = false
+
+    // Redirect to login page
+    router.push('/')
   } catch (err) {
     console.error('Error logging out:', err)
   }
 }
+
 
 const { user, loading } = useAuth()
 
