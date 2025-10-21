@@ -18,13 +18,13 @@
         <p><strong>Total Weight Lifted:</strong> {{ profile.totalWeight }} kg</p>
 
         <div v-if="muscleStats && Object.keys(muscleStats).length" class="muscle-stats">
-          <h3>Muscle Groups Trained</h3>
-          <ul>
-            <li v-for="(count, muscle) in muscleStats" :key="muscle">
-              {{ muscle }}: {{ count }} times
-            </li>
-          </ul>
-        </div>
+  <h3>Muscle Groups Trained</h3>
+  <div class="muscle-stats-inline">
+    <p v-for="(count, muscle) in muscleStats" :key="muscle">
+      <strong>{{ muscle }}:</strong> {{ count }} times
+    </p>
+  </div>
+</div>
 
         <hr />
 
@@ -215,22 +215,16 @@ button:hover {
 
 .muscle-stats {
   margin-top: 20px;
-  text-align: left;
-}
-.muscle-stats h3 {
-  margin-bottom: 8px;
   text-align: center;
 }
-.muscle-stats ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+
+.muscle-stats h3 {
+  margin-bottom: 8px;
 }
-.muscle-stats li {
-  background: rgba(255,255,255,0.05);
-  border-radius: 6px;
-  padding: 6px 10px;
-  margin-bottom: 4px;
+
+.muscle-stats-inline p {
+  margin: 4px 0;
+  font-size: 1rem;
 }
 
 /* Modal */
