@@ -1,83 +1,100 @@
 <template>
-  <div class="my-workouts">
-    <h1>My Workouts</h1>
-    <button v-if="user" @click="logout">Logout</button>
+  <div class="workouts-background">
+    <div class="my-workouts">
+      <h1>My Workouts</h1>
+      <button v-if="user" @click="logout">Logout</button>
 
+      <!-- Add / Cancel Workout Button -->
+      <button @click="showForm = !showForm">
+        {{ showForm ? 'Cancel' : editingWorkout ? 'Edit Workout' : 'Add New Workout' }}
+      </button>
 
-    <!-- Add / Cancel Workout Button -->
-    <button @click="showForm = !showForm">
-      {{ showForm ? 'Cancel' : editingWorkout ? 'Edit Workout' : 'Add New Workout' }}
-    </button>
+      <!-- Workout Form -->
+      <div v-if="showForm" class="new-workout-form">
+        <h2>{{ editingWorkout ? 'Edit Workout' : 'New Workout' }}</h2>
 
-    <!-- Workout Form -->
-    <div v-if="showForm" class="new-workout-form">
-      <h2>{{ editingWorkout ? 'Edit Workout' : 'New Workout' }}</h2>
-
-      <!-- Exercise Form -->
-      <div v-for="(exercise, exIndex) in exercises" :key="exIndex" class="exercise-form">
-        <label>
-          Muscle Group:
-          <select v-model="exercise.muscle">
-            <option value="">Select Muscle</option>
-            <option v-for="group in muscleGroups" :key="group" :value="group">{{ group }}</option>
-          </select>
-        </label>
-
-        <label>
-          Exercise:
-          <select v-model="exercise.name">
-            <option disabled value="">Select Exercise</option>
-            <option
-              v-for="ex in exerciseOptions.filter(e => e.muscle === exercise.muscle)"
-              :key="ex.name"
-              :value="ex.name"
-            >
-              {{ ex.name }}
-            </option>
-          </select>
-        </label>
-
-        <!-- Sets -->
-        <div v-for="(set, setIndex) in exercise.sets" :key="setIndex" class="set-input">
+        <!-- Exercise Form -->
+        <div
+          v-for="(exercise, exIndex) in exercises"
+          :key="exIndex"
+          class="exercise-form"
+        >
           <label>
-            Reps:
-            <input v-model.number="set.reps" type="number" min="1" />
+            Muscle Group:
+            <select v-model="exercise.muscle">
+              <option value="">Select Muscle</option>
+              <option
+                v-for="group in muscleGroups"
+                :key="group"
+                :value="group"
+              >
+                {{ group }}
+              </option>
+            </select>
           </label>
+
           <label>
-            Weight:
-            <input v-model.number="set.weight" type="number" min="0" />
+            Exercise:
+            <select v-model="exercise.name">
+              <option disabled value="">Select Exercise</option>
+              <option
+                v-for="ex in exerciseOptions.filter(e => e.muscle === exercise.muscle)"
+                :key="ex.name"
+                :value="ex.name"
+              >
+                {{ ex.name }}
+              </option>
+            </select>
           </label>
-          <button @click="removeSet(exIndex, setIndex)">Remove Set</button>
+
+          <!-- Sets -->
+          <div
+            v-for="(set, setIndex) in exercise.sets"
+            :key="setIndex"
+            class="set-input"
+          >
+            <label>
+              Reps:
+              <input v-model.number="set.reps" type="number" min="1" />
+            </label>
+            <label>
+              Weight:
+              <input v-model.number="set.weight" type="number" min="0" />
+            </label>
+            <button @click="removeSet(exIndex, setIndex)">Remove Set</button>
+          </div>
+
+          <button @click="addSet(exIndex)">Add Set</button>
+          <button @click="removeExercise(exIndex)">Remove Exercise</button>
+          <hr />
         </div>
 
-        <button @click="addSet(exIndex)">Add Set</button>
-        <button @click="removeExercise(exIndex)">Remove Exercise</button>
-        <hr />
+        <button @click="addExercise">Add Exercise</button>
+        <button @click="saveWorkout">
+          {{ editingWorkout ? 'Update Workout' : 'Save Workout' }}
+        </button>
       </div>
 
-      <button @click="addExercise">Add Exercise</button>
-      <button @click="saveWorkout">{{ editingWorkout ? 'Update Workout' : 'Save Workout' }}</button>
-    </div>
-
-    <!-- Workouts List -->
-    <div class="workouts-list" v-if="workouts.length">
-      <h2>Previous Workouts</h2>
-      <ul>
-        <li v-for="w in workouts" :key="w.id">
-          <strong>{{ w.date }}</strong>
-          <ul>
-            <li v-for="(ex, i) in w.exercises" :key="i">
-              {{ ex.muscle }} — {{ ex.name }}:
-              <span v-for="(set, si) in ex.sets" :key="si">
-                {{ set.reps }}x{{ set.weight }}kg
-                <span v-if="si < ex.sets.length - 1">, </span>
-              </span>
-            </li>
-          </ul>
-          <button @click="startEditWorkout(w)">Edit</button>
-          <button @click="deleteWorkout(w.id)">Delete</button>
-        </li>
-      </ul>
+      <!-- Workouts List -->
+      <div class="workouts-list" v-if="workouts.length">
+        <h2>Previous Workouts</h2>
+        <ul>
+          <li v-for="w in workouts" :key="w.id">
+            <strong>{{ w.date }}</strong>
+            <ul>
+              <li v-for="(ex, i) in w.exercises" :key="i">
+                {{ ex.muscle }} — {{ ex.name }}:
+                <span v-for="(set, si) in ex.sets" :key="si">
+                  {{ set.reps }}x{{ set.weight }}kg
+                  <span v-if="si < ex.sets.length - 1">, </span>
+                </span>
+              </li>
+            </ul>
+            <button @click="startEditWorkout(w)">Edit</button>
+            <button @click="deleteWorkout(w.id)">Delete</button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -95,7 +112,6 @@ const logout = async () => {
   try {
     await signOut(auth)
     console.log('User logged out')
-    // Optionally reset local state
     exercises.value = []
     workouts.value = []
     editingWorkout.value = null
@@ -213,37 +229,66 @@ const loadWorkouts = async () => {
 
 // Watch auth state
 onMounted(() => {
-  watch([user, loading], ([u, isLoading]) => {
-    if (!isLoading && u) loadWorkouts()
-  }, { immediate: true })
+  watch(
+    [user, loading],
+    ([u, isLoading]) => {
+      if (!isLoading && u) loadWorkouts()
+    },
+    { immediate: true }
+  )
 })
 </script>
 
 <style scoped>
-.my-workouts {
-  width: 500px;
-  margin: 30px auto;
+.workouts-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/notepad.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+  overflow: hidden;
 }
+
+.my-workouts {
+  background-color: rgba(0, 0, 0, 0.65);
+  padding: 30px;
+  border-radius: 12px;
+  color: white;
+  width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
 .new-workout-form label {
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
 }
+
 .exercise-form {
   border: 1px solid #ccc;
   padding: 10px;
   margin-bottom: 5px;
   border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.05);
 }
+
 .set-input {
   display: flex;
   gap: 10px;
   margin-bottom: 5px;
 }
-select, input {
+
+select,
+input {
   flex: 1;
   margin-left: 10px;
 }
