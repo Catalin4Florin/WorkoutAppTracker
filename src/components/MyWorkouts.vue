@@ -389,13 +389,21 @@ h1 {
   margin-bottom: 12px;
 }
 
-.field select {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: none;
-  background: #2a2a2a;
+.field select,
+.set-input input {
+  background: #2f2f2f;
+  border: 1px solid #555;
   color: #fff;
+  border-radius: 6px;
+  padding: 8px 10px;
+  transition: all 0.2s ease;
+}
+
+.field select:focus,
+.set-input input:focus {
+  outline: none;
+  border-color: #888;
+  box-shadow: 0 0 5px #888;
 }
 
 .set-input {
@@ -410,17 +418,6 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-
-.set-input input {
-  width: 100%;
-  max-width: 120px;
-  text-align: center;
-  border-radius: 6px;
-  border: none;
-  padding: 8px 10px;
-  background: #2a2a2a;
-  color: #fff;
 }
 
 .set-input button {
