@@ -56,14 +56,24 @@
             :key="setIndex"
             class="set-input"
           >
-            <label>
-              Reps:
-              <input v-model.number="set.reps" type="number" min="1" />
-            </label>
-            <label>
-              Weight:
-              <input v-model.number="set.weight" type="number" min="0" />
-            </label>
+          <label>
+  Reps:
+  <input
+    v-model.number="set.reps"
+    type="number"
+    min="1"
+    placeholder="8"
+  />
+</label>
+<label>
+  Weight:
+  <input
+    v-model.number="set.weight"
+    type="number"
+    min="0"
+    placeholder="0"
+  />
+</label>
             <button @click="removeSet(exIndex, setIndex)">Remove Set</button>
           </div>
 
@@ -163,6 +173,12 @@ const auth = getAuth()
 const showLogoutPopup = ref(false)
 const { user, loading } = useAuth()
 
+const startNewWorkout = () => {
+  showForm.value = true
+  exercises.value = [{ muscle: '', name: '', sets: [{ reps: null, weight: null }] }]
+}
+
+
 const exerciseOptions = [
   { name: 'Bench Press', muscle: 'Chest' },
   { name: 'Incline Dumbbell Press', muscle: 'Chest' },
@@ -180,11 +196,6 @@ const editingWorkout = ref(null)
 const workouts = ref([])
 const workoutsCollection = collection(db, 'workouts')
 
-const startNewWorkout = () => {
-  showForm.value = true
-  exercises.value = [{ muscle: '', name: '', sets: [{ reps: 10, weight: 0 }] }]
-}
-
 const cancelWorkout = () => {
   showForm.value = false
   exercises.value = []
@@ -192,10 +203,13 @@ const cancelWorkout = () => {
 }
 
 const addExercise = () =>
-  exercises.value.push({ muscle: '', name: '', sets: [{ reps: 10, weight: 0 }] })
+  exercises.value.push({ muscle: '', name: '', sets: [{ reps: null, weight: null }] })
+
 const removeExercise = (index) => exercises.value.splice(index, 1)
+
 const addSet = (exIndex) =>
-  exercises.value[exIndex].sets.push({ reps: 10, weight: 0 })
+  exercises.value[exIndex].sets.push({ reps: null, weight: null })
+
 const removeSet = (exIndex, setIndex) =>
   exercises.value[exIndex].sets.splice(setIndex, 1)
 
@@ -359,6 +373,7 @@ onBeforeUnmount(() => {
   min-height: 100vh;
   background-image: url('/notepad.jpg');
   background-size: cover;
+  background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
