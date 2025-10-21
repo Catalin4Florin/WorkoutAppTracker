@@ -17,6 +17,15 @@
         <p><strong>Total Workouts:</strong> {{ profile.totalWorkouts }}</p>
         <p><strong>Total Weight Lifted:</strong> {{ profile.totalWeight }} kg</p>
 
+        <div v-if="muscleStats && Object.keys(muscleStats).length" class="muscle-stats">
+          <h3>Muscle Groups Trained</h3>
+          <ul>
+            <li v-for="(count, muscle) in muscleStats" :key="muscle">
+              {{ muscle }}: {{ count }} times
+            </li>
+          </ul>
+        </div>
+
         <hr />
 
         <button @click="showPasswordModal = true" class="change-password-btn">
@@ -58,12 +67,13 @@
 import { ref, watch } from 'vue'
 import { db } from '../firebase'
 import { useAuth } from '../composables/useAuth'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { doc, getDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore'
 import { updatePassword } from 'firebase/auth'
 
 const { user, loading } = useAuth()
 const profile = ref(null)
 const loadingProfile = ref(true)
+const muscleStats = ref({})
 
 const showPasswordModal = ref(false)
 const newPassword = ref('')
@@ -78,6 +88,25 @@ const loadUserProfile = async () => {
     if (snapshot.exists()) {
       profile.value = snapshot.data()
     }
+
+    // Calculate per-muscle statistics
+    const workoutsRef = collection(db, 'workouts')
+    const q = query(workoutsRef, where('uid', '==', user.value.uid))
+    const workoutsSnap = await getDocs(q)
+
+    const muscleCount = {}
+    workoutsSnap.forEach(docSnap => {
+      const data = docSnap.data()
+      if (data.exercises) {
+        data.exercises.forEach(ex => {
+          if (ex.muscle) {
+            const muscle = ex.muscle.trim()
+            muscleCount[muscle] = (muscleCount[muscle] || 0) + 1
+          }
+        })
+      }
+    })
+    muscleStats.value = muscleCount
   } catch (err) {
     console.error('Error loading profile:', err)
   } finally {
@@ -184,6 +213,27 @@ button:hover {
   background-color: #a12631;
 }
 
+.muscle-stats {
+  margin-top: 20px;
+  text-align: left;
+}
+.muscle-stats h3 {
+  margin-bottom: 8px;
+  text-align: center;
+}
+.muscle-stats ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.muscle-stats li {
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-bottom: 4px;
+}
+
+/* Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;
