@@ -170,6 +170,7 @@ const exercises = ref([])
 const editingWorkout = ref(null)
 const viewWorkout = ref(null)
 
+
 const openNewWorkout = () => {
   showForm.value = true
   exercises.value = [{ muscle: '', name: '', sets: [{ reps: null, weight: null }] }]
@@ -189,6 +190,7 @@ const closeViewWorkout = () => {
   viewWorkout.value = null
 }
 
+
 const addExercise = () =>
   exercises.value.push({ muscle: '', name: '', sets: [{ reps: null, weight: null }] })
 
@@ -199,6 +201,7 @@ const addSet = (exIndex) =>
 
 const removeSet = (exIndex, setIndex) =>
   exercises.value[exIndex].sets.splice(setIndex, 1)
+
 
 const startEditWorkout = (workout) => {
   editingWorkout.value = { ...workout }
@@ -222,11 +225,35 @@ const saveWorkout = async () => {
       }
       await addDoc(workoutsCollection, newWorkout)
     }
+
     await loadWorkouts()
+    await updateUserStats() 
     closeNewWorkout()
   } catch (err) {
     console.error('Error saving workout:', err)
   }
+}
+
+const updateUserStats = async () => {
+  if (!user.value) return
+  const q = query(workoutsCollection, where('uid', '==', user.value.uid))
+  const snapshot = await getDocs(q)
+
+  let totalWeight = 0
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data()
+    data.exercises.forEach((ex) => {
+      ex.sets.forEach((set) => {
+        if (set.reps && set.weight) totalWeight += set.reps * set.weight
+      })
+    })
+  })
+
+  const userRef = doc(db, 'users', user.value.uid)
+  await updateDoc(userRef, {
+    totalWorkouts: snapshot.size,
+    totalWeight
+  })
 }
 
 const getMuscleSummary = (exercises) => {
@@ -254,6 +281,7 @@ onMounted(() => {
   }, { immediate: true })
 })
 </script>
+
 
 <style scoped>
 .workouts-background {
