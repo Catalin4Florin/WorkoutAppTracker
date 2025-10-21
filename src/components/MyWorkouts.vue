@@ -157,11 +157,30 @@ const exerciseOptions = [
   { name: 'Deadlift', muscle: 'Back' },
   { name: 'Pull-Up', muscle: 'Back' },
   { name: 'Overhead Press', muscle: 'Shoulders' },
-  { name: 'Bicep Curl', muscle: 'Arms' },
-  { name: 'Tricep Pushdown', muscle: 'Arms' }
+  { name: 'Seated Dumbbell Press', muscle: 'Shoulders' },
+  { name: 'Lat Raise', muscle: 'Shoulders' },
+  { name: 'Tricep Straightbar Pushdown', muscle: 'Arms' },
+  { name: 'Tricep Rope Pushdown', muscle: 'Arms' },
+  { name: 'Dumbbell Curl', muscle: 'Arms ' },
+  { name: 'Barbell Curl', muscle: 'Arms ' },
+  { name: 'Skullcrusher', muscle: 'Arms ' },
+  { name: 'Cable Crunch', muscle: 'Abs' },
+  { name: 'Leg Raise', muscle: 'Abs' },
+  { name: 'Cable Row', muscle: 'Back ' },
+  { name: 'Lat Pulldown', muscle: 'Back ' },
+  { name: 'T-Bar row', muscle: 'Back ' },
+  { name: 'Leg Press', muscle: 'Legs ' },
+  { name: 'Leg Curl', muscle: 'Legs ' },
+  { name: 'Leg Extension', muscle: 'Legs ' },
+  { name: 'Shrugs', muscle: 'Back ' },
+  { name: 'Calf Raise', muscle: 'Legs ' },
+  { name: 'Romanian Deadlift', muscle: 'Legs ' },
+  { name: 'Reverse Flies', muscle: 'Shoulders ' },
+  { name: 'Facepull', muscle: 'Shoulders ' },
+  { name: 'Hammer Curl', muscle: 'Arms ' },
 ]
 
-const muscleGroups = ['Chest', 'Legs', 'Back', 'Shoulders', 'Arms']
+const muscleGroups = ['Chest', 'Legs', 'Back', 'Shoulders', 'Arms', 'Abs']
 const workoutsCollection = collection(db, 'workouts')
 
 const workouts = ref([])

@@ -98,7 +98,7 @@ watch(
 }
 
 .register-btn {
-  background-color: #3b82f6;
+  background-color: #ffa500;
   color: white;
   padding: 10px 18px;
   border-radius: 8px;
@@ -107,6 +107,6 @@ watch(
 }
 
 .register-btn:hover {
-  background-color: #2563eb;
+  background-color: #ae7202;
 }
 </style>
