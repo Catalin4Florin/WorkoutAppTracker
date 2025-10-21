@@ -81,7 +81,7 @@ onMounted(() => {
   intervalId = setInterval(() => {
     currentIndex.value = (currentIndex.value + 1) % images.length
     currentImage.value = images[currentIndex.value]
-  }, 2500) 
+  }, 5000) 
 })
 
 onUnmounted(() => {
