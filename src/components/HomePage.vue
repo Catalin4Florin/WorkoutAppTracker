@@ -32,21 +32,32 @@ const { user, loading } = useAuth()
 const nickname = ref('')
 
 const loadNickname = async () => {
-  if (!user.value) return
+  if (!user.value) {
+    nickname.value = ''
+    return
+  }
   try {
     const userRef = doc(db, 'users', user.value.uid)
     const snapshot = await getDoc(userRef)
     if (snapshot.exists()) {
       nickname.value = snapshot.data().nickname || ''
+    } else {
+      nickname.value = ''
     }
   } catch (err) {
     console.error('Error loading nickname:', err)
   }
 }
 
-watch([user, loading], ([u, isLoading]) => {
-  if (!isLoading && u) loadNickname()
-}, { immediate: true })
+watch(
+  [user, loading],
+  ([u, isLoading]) => {
+    if (isLoading) return
+    if (u) loadNickname()
+    else nickname.value = ''
+  },
+  { immediate: true }
+)
 </script>
 
 <style scoped>
