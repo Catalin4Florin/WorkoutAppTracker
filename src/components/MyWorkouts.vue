@@ -4,21 +4,17 @@
       <h1>My Workouts</h1>
       <button v-if="user" @click="logout">Logout</button>
 
-      <!-- Logout success popup -->
       <div v-if="showLogoutPopup" class="logout-popup">
         Successfully logged out!
       </div>
 
-      <!-- Add / Cancel Workout Button -->
       <button @click="showForm = !showForm">
         {{ showForm ? 'Cancel' : editingWorkout ? 'Edit Workout' : 'Add New Workout' }}
       </button>
 
-      <!-- Workout Form -->
       <div v-if="showForm" class="new-workout-form">
         <h2>{{ editingWorkout ? 'Edit Workout' : 'New Workout' }}</h2>
 
-        <!-- Exercise Form -->
         <div v-for="(exercise, exIndex) in exercises" :key="exIndex" class="exercise-form">
           <label>
             Muscle Group:
@@ -44,7 +40,6 @@
             </select>
           </label>
 
-          <!-- Sets -->
           <div v-for="(set, setIndex) in exercise.sets" :key="setIndex" class="set-input">
             <label>
               Reps:
@@ -68,7 +63,6 @@
         </button>
       </div>
 
-      <!-- Workouts List -->
       <div class="workouts-list" v-if="workouts.length">
         <h2>Previous Workouts</h2>
         <ul>
@@ -84,9 +78,34 @@
               </li>
             </ul>
             <button @click="startEditWorkout(w)">Edit</button>
-            <button @click="deleteWorkout(w.id)">Delete</button>
+            <button @click="openDeleteModal(w)">Delete</button>
           </li>
         </ul>
+      </div>
+    </div>
+
+    <div
+      v-if="showDeleteModal"
+      class="modal-backdrop"
+      @click.self="closeDeleteModal"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="modal">
+        <h3>Delete this workout?</h3>
+        <p class="modal-sub">
+          Date: <strong>{{ pendingDelete.meta.date }}</strong> •
+          Exercises: <strong>{{ pendingDelete.meta.exerciseCount }}</strong>
+        </p>
+
+        <div class="modal-actions">
+          <button class="btn-danger" :disabled="deleting" @click="confirmDelete">
+            {{ deleting ? 'Deleting…' : 'Delete' }}
+          </button>
+          <button class="btn-secondary" :disabled="deleting" @click="closeDeleteModal">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -94,7 +113,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { db } from '../firebase'
 import {
   collection,
@@ -207,14 +226,43 @@ const saveWorkout = async () => {
   }
 }
 
-const deleteWorkout = async (id) => {
+const showDeleteModal = ref(false)
+const deleting = ref(false)
+const pendingDelete = ref({
+  id: null,
+  meta: { date: '', exerciseCount: 0 }
+})
+
+const openDeleteModal = (workout) => {
+  pendingDelete.value.id = workout.id
+  pendingDelete.value.meta.date = workout.date
+  pendingDelete.value.meta.exerciseCount = workout.exercises?.length || 0
+  showDeleteModal.value = true
+}
+
+const closeDeleteModal = () => {
+  if (deleting.value) return
+  showDeleteModal.value = false
+  pendingDelete.value = { id: null, meta: { date: '', exerciseCount: 0 } }
+}
+
+const confirmDelete = async () => {
+  if (!pendingDelete.value.id) return
+  deleting.value = true
   try {
-    await deleteDoc(doc(db, 'workouts', id))
-    workouts.value = workouts.value.filter(w => w.id !== id)
+    await deleteDoc(doc(db, 'workouts', pendingDelete.value.id))
+    workouts.value = workouts.value.filter(w => w.id !== pendingDelete.value.id)
     await updateUserStats() // recalc totals
   } catch (err) {
     console.error('Error deleting workout:', err)
+  } finally {
+    deleting.value = false
+    closeDeleteModal()
   }
+}
+
+const onKeydown = (e) => {
+  if (e.key === 'Escape' && showDeleteModal.value) closeDeleteModal()
 }
 
 const loadWorkouts = async () => {
@@ -232,9 +280,14 @@ const loadWorkouts = async () => {
 }
 
 onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
   watch([user, loading], ([u, isLoading]) => {
     if (!isLoading && u) loadWorkouts()
   }, { immediate: true })
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
 })
 </script>
 
@@ -266,6 +319,31 @@ onMounted(() => {
   overflow-y: auto;
 }
 
+.new-workout-form label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.exercise-form {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.set-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+select, input {
+  flex: 1;
+  margin-left: 10px;
+}
+
 .logout-popup {
   position: fixed;
   top: 50%;
@@ -288,5 +366,63 @@ onMounted(() => {
   15% { opacity: 1; transform: translate(-50%, -50%); }
   85% { opacity: 1; }
   100% { opacity: 0; transform: translate(-50%, -40%); }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #1f1f1f;
+  color: #fff;
+  width: 90%;
+  max-width: 420px;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+.modal-sub {
+  opacity: 0.9;
+  margin: 8px 0 18px 0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-danger {
+  background: #b02a37;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: #a12631;
+}
+
+.btn-secondary {
+  background: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #3d3d3d;
 }
 </style>
