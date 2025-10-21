@@ -1,29 +1,15 @@
-<script setup>
-import { useAuth } from './composables/useAuth'
-import LoginPage from './components/LoginPage.vue'
-import MyWorkouts from './components/MyWorkouts.vue'
-
-const { user, loading } = useAuth()
-</script>
-
 <template>
-  <div>
-    <LoginPage v-if="!user" />
-    <MyWorkouts v-else />
-  </div>
+  <router-view />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+<script setup>
+</script>
+
+<style>
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
 </style>
