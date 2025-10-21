@@ -2,13 +2,20 @@
   <nav class="navbar">
     <router-link to="/" class="logo">🏋️ Workout Tracker</router-link>
 
-    <div class="burger" @click="toggleMenu">
-      <div :class="{ active: menuOpen }" class="burger-icon">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
+    <button class="burger" @click="toggleMenu">
+      <img
+        v-if="!menuOpen"
+        src="/burger.svg"
+        alt="Menu"
+        class="icon"
+      />
+      <img
+        v-else
+        src="/close.svg"
+        alt="Close"
+        class="icon"
+      />
+    </button>
 
     <div class="navbar-links" :class="{ open: menuOpen }">
       <router-link to="/" @click="closeMenu">Home</router-link>
@@ -19,6 +26,7 @@
     </div>
   </nav>
 </template>
+
 
 <script setup>
 import { ref } from 'vue'
@@ -90,6 +98,28 @@ const logoutAndClose = async () => {
   background: #333;
 }
 
+.burger {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.burger .icon {
+  width: 28px;
+  height: 28px;
+  transition: opacity 0.2s ease;
+}
+
+@media (max-width: 1024px) {
+  .burger {
+    display: block;
+  }
+}
+
+
 /* Burger inside flex flow */
 .burger {
   display: none;
@@ -104,6 +134,7 @@ const logoutAndClose = async () => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: opacity 0.2s ease;
 }
 
 .burger-icon span {
@@ -121,6 +152,10 @@ const logoutAndClose = async () => {
 }
 .burger-icon.active span:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -6px);
+}
+
+.burger:hover .icon {
+  opacity: 0.8;
 }
 
 /* Responsive Navbar */
