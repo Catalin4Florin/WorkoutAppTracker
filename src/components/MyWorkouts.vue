@@ -4,6 +4,11 @@
       <h1>My Workouts</h1>
       <button v-if="user" @click="logout">Logout</button>
 
+      <!-- Logout success popup -->
+      <div v-if="showLogoutPopup" class="logout-popup">
+        Successfully logged out!
+      </div>
+
       <!-- Add / Cancel Workout Button -->
       <button @click="showForm = !showForm">
         {{ showForm ? 'Cancel' : editingWorkout ? 'Edit Workout' : 'Add New Workout' }}
@@ -101,35 +106,39 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
 import { ref, onMounted, watch } from 'vue'
 import { db } from '../firebase'
 import { collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { useAuth } from '../composables/useAuth'
 import { getAuth, signOut } from 'firebase/auth'
 
+const router = useRouter()
 const auth = getAuth()
+const showLogoutPopup = ref(false)
 
 const logout = async () => {
   try {
     await signOut(auth)
     console.log('User logged out')
 
-    // Clear all local state
+    // Show success popup
+    showLogoutPopup.value = true
+
+    // Clear local state
     exercises.value = []
     workouts.value = []
     editingWorkout.value = null
     showForm.value = false
 
-    // Redirect to login page
-    router.push('/')
+    // Hide popup and redirect after 1.5s
+    setTimeout(() => {
+      showLogoutPopup.value = false
+      router.push('/')
+    }, 1500)
   } catch (err) {
     console.error('Error logging out:', err)
   }
 }
-
 
 const { user, loading } = useAuth()
 
@@ -301,5 +310,42 @@ select,
 input {
   flex: 1;
   margin-left: 10px;
+}
+
+/* Logout popup bubble */
+.logout-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #ffb347;
+  padding: 20px 30px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeInOut 1.5s ease-in-out forwards;
+  box-shadow: 0 0 20px rgba(255, 179, 71, 0.5);
+  z-index: 999;
+}
+
+/* Fade animation */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
 }
 </style>
