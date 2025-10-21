@@ -4,19 +4,22 @@
         <h2 class="logo" @click="goHome">🏋️ Workout Tracker</h2>
   
         <div class="nav-links">
+          <button @click="goHome">Home</button>
+  
           <template v-if="user">
             <button @click="goToWorkouts">My Workouts</button>
             <button @click="logout">Logout</button>
           </template>
   
           <template v-else>
-            <button @click="goHome">Login</button>
-            <button @click="goHome">Register</button>
+            <button @click="goToLogin">Login</button>
+            <button @click="goToLogin">Register</button>
           </template>
         </div>
       </div>
     </nav>
   </template>
+  
   
   <script setup>
   import { useRouter } from 'vue-router'
@@ -24,6 +27,7 @@
   import { useAuth } from '../composables/useAuth'
   import { ref } from 'vue'
   
+  const goToLogin = () => router.push('/login')
   const router = useRouter()
   const auth = getAuth()
   const { user } = useAuth()
