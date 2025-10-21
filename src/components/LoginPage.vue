@@ -65,33 +65,63 @@
   </script>
   
   <style scoped>
-  .login-background {
-    background-image: url('/jayCutler.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative; /* needed for popup positioning */
-  }
-  
-  .login-box {
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 30px;
-    border-radius: 12px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    gap: 10px;
-  }
-  
-  .error {
-    color: red;
-  }
+ .login-background {
+  background-image: url('/jayCutler.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 30px;
+  border-radius: 12px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  gap: 10px;
+}
+
+input {
+  border: none;
+  border-radius: 8px;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: white;
+  height: 42px; /* ✅ same height as buttons */
+  box-sizing: border-box;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: white;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  height: 42px; /* ✅ matches inputs */
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+.error {
+  color: red;
+}
+
   
   /* Popup bubble */
   .success-popup {
