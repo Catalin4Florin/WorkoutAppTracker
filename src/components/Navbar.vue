@@ -8,13 +8,12 @@
   
           <template v-if="user">
             <button @click="goToWorkouts">My Workouts</button>
-            <button @click="goToProfile">Profile</button> <!-- ✅ New -->
+            <button @click="goToProfile">Profile</button>
             <button @click="logout">Logout</button>
           </template>
   
           <template v-else>
-            <button @click="goToLogin">Login</button>
-            <button @click="goToLogin">Register</button>
+            <button @click="goToLogin">Log In / Register</button>
           </template>
         </div>
       </div>
@@ -35,12 +34,11 @@
   const goHome = () => router.push('/')
   const goToLogin = () => router.push('/login')
   const goToWorkouts = () => router.push('/myworkouts')
-  const goToProfile = () => router.push('/profile') // ✅ New
+  const goToProfile = () => router.push('/profile')
   
   const logout = async () => {
     try {
       await signOut(auth)
-      console.log('User logged out')
       showLogoutPopup.value = true
       setTimeout(() => {
         showLogoutPopup.value = false
