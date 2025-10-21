@@ -3,15 +3,12 @@
     <div class="my-workouts">
       <h1>My Workouts</h1>
 
-      <!-- Workouts Grid -->
       <div class="workout-grid">
-        <!-- Add New Workout Card -->
         <div class="workout-card new-workout" @click="openNewWorkout">
           <div class="plus">+</div>
           <p>New Workout</p>
         </div>
 
-        <!-- Previous Workouts -->
         <div
           v-for="workout in workouts"
           :key="workout.id"
@@ -19,17 +16,12 @@
           @click="openViewWorkout(workout)"
         >
           <h3>{{ workout.date }}</h3>
-          <p class="workout-info">
-            {{ workout.exercises.length }} exercises
-          </p>
-          <p class="workout-muscles">
-            {{ getMuscleSummary(workout.exercises) }}
-          </p>
+          <p class="workout-info">{{ workout.exercises.length }} exercises</p>
+          <p class="workout-muscles">{{ getMuscleSummary(workout.exercises) }}</p>
         </div>
       </div>
     </div>
 
-    <!-- New Workout Modal -->
     <div
       v-if="showForm"
       class="modal-backdrop"
@@ -45,18 +37,18 @@
           :key="exIndex"
           class="exercise-form"
         >
-          <label>
-            Muscle Group:
+          <div class="field">
+            <label>Muscle Group</label>
             <select v-model="exercise.muscle">
               <option value="">Select Muscle</option>
               <option v-for="group in muscleGroups" :key="group" :value="group">
                 {{ group }}
               </option>
             </select>
-          </label>
+          </div>
 
-          <label>
-            Exercise:
+          <div class="field">
+            <label>Exercise</label>
             <select v-model="exercise.name">
               <option disabled value="">Select Exercise</option>
               <option
@@ -67,7 +59,7 @@
                 {{ ex.name }}
               </option>
             </select>
-          </label>
+          </div>
 
           <div
             v-for="(set, setIndex) in exercise.sets"
@@ -75,11 +67,11 @@
             class="set-input"
           >
             <label>
-              Reps:
+              <span>Reps</span>
               <input v-model.number="set.reps" type="number" min="1" placeholder="10" />
             </label>
             <label>
-              Weight:
+              <span>Weight</span>
               <input v-model.number="set.weight" type="number" min="0" placeholder="0" />
             </label>
             <button @click="removeSet(exIndex, setIndex)">Remove Set</button>
@@ -89,10 +81,13 @@
             <button class="add-set" @click="addSet(exIndex)">Add Set</button>
             <button class="remove-exercise" @click="removeExercise(exIndex)">Remove Exercise</button>
           </div>
+
           <hr />
         </div>
 
-        <button @click="addExercise" class="add-exercise">Add Exercise</button>
+        <div class="footer-actions">
+          <button @click="addExercise" class="add-exercise">Add Exercise</button>
+        </div>
 
         <div class="form-actions">
           <button @click="closeNewWorkout" class="cancel-workout">Cancel</button>
@@ -103,7 +98,6 @@
       </div>
     </div>
 
-    <!-- View Workout Modal -->
     <div
       v-if="viewWorkout"
       class="modal-backdrop"
@@ -144,8 +138,7 @@ import {
   where,
   orderBy,
   doc,
-  updateDoc,
-  deleteDoc
+  updateDoc
 } from 'firebase/firestore'
 
 const { user, loading } = useAuth()
@@ -182,7 +175,6 @@ const exerciseOptions = [
   { name: 'Leg Raise', muscle: 'Abs' }
 ]
 
-
 const muscleGroups = ['Chest', 'Legs', 'Back', 'Shoulders', 'Arms', 'Abs']
 const workoutsCollection = collection(db, 'workouts')
 
@@ -191,7 +183,6 @@ const showForm = ref(false)
 const exercises = ref([])
 const editingWorkout = ref(null)
 const viewWorkout = ref(null)
-
 
 const openNewWorkout = () => {
   showForm.value = true
@@ -212,7 +203,6 @@ const closeViewWorkout = () => {
   viewWorkout.value = null
 }
 
-
 const addExercise = () =>
   exercises.value.push({ muscle: '', name: '', sets: [{ reps: null, weight: null }] })
 
@@ -223,7 +213,6 @@ const addSet = (exIndex) =>
 
 const removeSet = (exIndex, setIndex) =>
   exercises.value[exIndex].sets.splice(setIndex, 1)
-
 
 const startEditWorkout = (workout) => {
   editingWorkout.value = { ...workout }
@@ -247,9 +236,8 @@ const saveWorkout = async () => {
       }
       await addDoc(workoutsCollection, newWorkout)
     }
-
     await loadWorkouts()
-    await updateUserStats() 
+    await updateUserStats()
     closeNewWorkout()
   } catch (err) {
     console.error('Error saving workout:', err)
@@ -304,7 +292,6 @@ onMounted(() => {
 })
 </script>
 
-
 <style scoped>
 .workouts-background {
   position: relative;
@@ -331,7 +318,6 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Grid Layout */
 .workout-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -366,7 +352,6 @@ h1 {
   margin-bottom: 8px;
 }
 
-/* Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -381,23 +366,119 @@ h1 {
   background: #1f1f1f;
   color: #fff;
   width: 90%;
-  max-width: 600px;
-  padding: 25px;
+  max-width: 640px;
+  padding: 28px;
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   overflow-y: auto;
   max-height: 90vh;
 }
 
+.exercise-form {
+  border: 1px solid #555;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.field select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.set-input {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.set-input label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.set-input input {
+  width: 100%;
+  max-width: 120px;
+  text-align: center;
+  border-radius: 6px;
+  border: none;
+  padding: 8px 10px;
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.set-input button {
+  background: #b02a37;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  height: 36px;
+}
+
+.set-input button:hover {
+  background: #a12631;
+}
+
+.exercise-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.add-set {
+  background: #444;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.remove-exercise {
+  background: #b02a37;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 6px;
+}
+
+.add-exercise {
+  background: #444;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 12px;
+  margin-top: 16px;
 }
 
 .cancel-workout {
   background: #6c757d;
+  padding: 10px 14px;
+  border-radius: 8px;
 }
 
 .cancel-workout:hover {
@@ -406,60 +487,11 @@ h1 {
 
 .save-workout {
   background: #198754;
+  padding: 10px 14px;
+  border-radius: 8px;
 }
 
 .save-workout:hover {
   background: #157347;
-}
-
-/* Exercise form styling */
-.exercise-form {
-  border: 1px solid #555;
-  padding: 10px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.set-input {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-
-.set-input input {
-  width: 70px;
-  text-align: center;
-  border-radius: 5px;
-  border: none;
-  padding: 4px;
-}
-
-.set-input button {
-  background: #b02a37;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 8px;
-  cursor: pointer;
-  font-size: 0.8rem;
-}
-
-.set-input button:hover {
-  background: #a12631;
-}
-
-.add-set {
-  background: #444;
-}
-
-.remove-exercise {
-  background: #b02a37;
-}
-
-.add-exercise {
-  background: #444;
-  margin-top: 10px;
 }
 </style>

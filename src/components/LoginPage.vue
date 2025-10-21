@@ -69,7 +69,6 @@ const handleRegister = async () => {
   }
 }
 
-// ✅ Google Login
 const signInWithGoogle = async () => {
   try {
     const provider = new GoogleAuthProvider()
