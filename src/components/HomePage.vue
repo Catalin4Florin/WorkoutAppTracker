@@ -1,89 +1,77 @@
 <template>
-    <div class="home-background">
-      <div class="home-content">
-        <h1>Welcome to Workout Tracker</h1>
-        <p>
-          Track your workouts, log your progress, and stay consistent with your fitness goals.
-          Whether you're training for strength, endurance, or aesthetics — this app helps you
-          stay organized and motivated every step of the way.
-        </p>
-        <p>💪 Create detailed workouts with sets, reps, and weights.</p>
-        <p>📈 Review your previous sessions to measure progress.</p>
-        <p>Start now — and take control of your training!</p>
-  
-        <button
-          v-if="!user"
-          class="register-btn"
-          @click="goToLogin"
-        >
-          Register for Free
-        </button>
-      </div>
+  <div class="home-container">
+    <div class="overlay">
+      <h1 class="title">
+        Welcome to Workout Tracker<span v-if="nickname">, {{ nickname }}</span>
+      </h1>
+      <p>
+        Track your workouts, log your progress, and stay consistent with your fitness goals.
+        Whether you're training for strength, endurance, or aesthetics — this app helps you
+        stay organized and motivated every step of the way.
+      </p>
+      <ul>
+        <li>💪 Create detailed workouts with sets, reps, and weights.</li>
+        <li>📈 Review your previous sessions to measure progress.</li>
+      </ul>
+      <p>Start now — and take control of your training!</p>
     </div>
-  </template>
-  
-  <script setup>
-  import { useRouter } from 'vue-router'
-  import { useAuth } from '../composables/useAuth'
-  
-  const router = useRouter()
-  const { user } = useAuth()
-  
-  const goToLogin = () => router.push('/login')
-  </script>
-  
-  <style scoped>
-  .home-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: url('/jayCutler.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, watch } from 'vue'
+import { db } from '../firebase'
+import { useAuth } from '../composables/useAuth'
+import { doc, getDoc } from 'firebase/firestore'
+
+const { user, loading } = useAuth()
+const nickname = ref('')
+
+const loadNickname = async () => {
+  if (!user.value) return
+  try {
+    const userRef = doc(db, 'users', user.value.uid)
+    const snapshot = await getDoc(userRef)
+    if (snapshot.exists()) {
+      const data = snapshot.data()
+      nickname.value = data.nickname || ''
+    }
+  } catch (err) {
+    console.error('Error loading nickname:', err)
   }
-  
-  .home-content {
-    background-color: rgba(0, 0, 0, 0.65);
-    color: white;
-    padding: 40px;
-    border-radius: 15px;
-    max-width: 700px;
-    text-align: center;
-  }
-  
-  h1 {
-    color: #ffa500;
-    margin-bottom: 20px;
-    font-size: 2rem;
-  }
-  
-  p {
-    margin-bottom: 10px;
-    line-height: 1.6;
-  }
-  
-  .register-btn {
-    margin-top: 20px;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: white;
-    background-color: #ff9900;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .register-btn:hover {
-    background-color: #ffa733;
-  }
-  </style>
-  
+}
+
+watch(
+  [user, loading],
+  ([u, isLoading]) => {
+    if (!isLoading && u) loadNickname()
+  },
+  { immediate: true }
+)
+</script>
+
+<style scoped>
+.home-container {
+  background-image: url('/jayCutler.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.65);
+  padding: 40px;
+  border-radius: 12px;
+  max-width: 600px;
+  text-align: center;
+}
+
+.title {
+  color: #ffa500;
+  margin-bottom: 15px;
+}
+</style>
