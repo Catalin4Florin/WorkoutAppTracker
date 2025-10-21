@@ -67,11 +67,11 @@
             class="set-input"
           >
             <label>
-              <span>Reps</span>
+              Reps
               <input v-model.number="set.reps" type="number" min="1" placeholder="10" />
             </label>
             <label>
-              <span>Weight</span>
+              Weight
               <input v-model.number="set.weight" type="number" min="0" placeholder="0" />
             </label>
             <button @click="removeSet(exIndex, setIndex)">Remove Set</button>
@@ -81,13 +81,10 @@
             <button class="add-set" @click="addSet(exIndex)">Add Set</button>
             <button class="remove-exercise" @click="removeExercise(exIndex)">Remove Exercise</button>
           </div>
-
           <hr />
         </div>
 
-        <div class="footer-actions">
-          <button @click="addExercise" class="add-exercise">Add Exercise</button>
-        </div>
+        <button @click="addExercise" class="add-exercise">Add Exercise</button>
 
         <div class="form-actions">
           <button @click="closeNewWorkout" class="cancel-workout">Cancel</button>
@@ -122,6 +119,10 @@
           <button class="save-workout" @click="startEditWorkout(viewWorkout)">Edit</button>
         </div>
       </div>
+    </div>
+
+    <div v-if="showPopup" class="error-popup">
+      {{ popupMessage }}
     </div>
   </div>
 </template>
@@ -183,6 +184,8 @@ const showForm = ref(false)
 const exercises = ref([])
 const editingWorkout = ref(null)
 const viewWorkout = ref(null)
+const showPopup = ref(false)
+const popupMessage = ref('')
 
 const openNewWorkout = () => {
   showForm.value = true
@@ -221,8 +224,25 @@ const startEditWorkout = (workout) => {
   showForm.value = true
 }
 
+const validateWorkout = () => {
+  for (const ex of exercises.value) {
+    if (!ex.muscle || !ex.name) return false
+    for (const set of ex.sets) {
+      if (!set.reps || !set.weight) return false
+    }
+  }
+  return true
+}
+
 const saveWorkout = async () => {
   if (!user.value || exercises.value.length === 0) return
+  if (!validateWorkout()) {
+    popupMessage.value = 'Please fill out all exercises and sets before saving.'
+    showPopup.value = true
+    setTimeout(() => (showPopup.value = false), 1800)
+    return
+  }
+
   try {
     if (editingWorkout.value) {
       const workoutRef = doc(db, 'workouts', editingWorkout.value.id)
@@ -236,6 +256,7 @@ const saveWorkout = async () => {
       }
       await addDoc(workoutsCollection, newWorkout)
     }
+
     await loadWorkouts()
     await updateUserStats()
     closeNewWorkout()
@@ -248,7 +269,6 @@ const updateUserStats = async () => {
   if (!user.value) return
   const q = query(workoutsCollection, where('uid', '==', user.value.uid))
   const snapshot = await getDocs(q)
-
   let totalWeight = 0
   snapshot.forEach((docSnap) => {
     const data = docSnap.data()
@@ -258,12 +278,8 @@ const updateUserStats = async () => {
       })
     })
   })
-
   const userRef = doc(db, 'users', user.value.uid)
-  await updateDoc(userRef, {
-    totalWorkouts: snapshot.size,
-    totalWeight
-  })
+  await updateDoc(userRef, { totalWorkouts: snapshot.size, totalWeight })
 }
 
 const getMuscleSummary = (exercises) => {
@@ -490,5 +506,29 @@ h1 {
 
 .save-workout:hover {
   background: #157347;
+}
+
+.error-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #ff6b6b;
+  padding: 20px 30px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeInOut 1.8s ease-in-out forwards;
+  box-shadow: 0 0 20px rgba(255, 100, 100, 0.4);
+  z-index: 1200;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -60%); }
+  15% { opacity: 1; transform: translate(-50%, -50%); }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -40%); }
 }
 </style>
