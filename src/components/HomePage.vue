@@ -20,30 +20,37 @@
   </script>
   
   <style scoped>
+  /* Full-screen background */
   .home-background {
+    position: fixed; /* ✅ Locks background in place */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background-image: url('/notepad.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    min-height: 100vh;
-    width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
-    padding: 40px;
+    overflow: hidden; /* ✅ Prevents internal scroll */
   }
   
+  /* Centered content box */
   .home-content {
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 12px;
     padding: 40px;
+    width: 80%;
     max-width: 700px;
     text-align: center;
     line-height: 1.6;
     font-size: 1.1rem;
   }
   
+  /* Headline styling */
   .home-content h1 {
     font-size: 2.2rem;
     margin-bottom: 20px;
