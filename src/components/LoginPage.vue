@@ -1,14 +1,16 @@
 <template>
-    <div class="login-page">
-      <h1>Welcome to Workout Tracker</h1>
-      
-      <input v-model="email" type="email" placeholder="Email" />
-      <input v-model="password" type="password" placeholder="Password" />
+    <div class="login-background">
+      <div class="login-box">
+        <h1>Welcome to Workout Tracker</h1>
   
-      <button @click="handleLogin">Login</button>
-      <button @click="handleRegister">Register</button>
+        <input v-model="email" type="email" placeholder="Email" />
+        <input v-model="password" type="password" placeholder="Password" />
   
-      <p v-if="error" style="color:red">{{ error }}</p>
+        <button @click="handleLogin">Login</button>
+        <button @click="handleRegister">Register</button>
+  
+        <p v-if="error" class="error">{{ error }}</p>
+      </div>
     </div>
   </template>
   
@@ -43,12 +45,33 @@
   </script>
   
   <style scoped>
-  .login-page {
+  /* full screen background container */
+  .login-background {
+    background-image: url('/jayCutler.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* the centered login box */
+  .login-box {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    border-radius: 12px;
+    color: white;
     display: flex;
     flex-direction: column;
     width: 300px;
-    margin: 50px auto;
     gap: 10px;
+  }
+  
+  .error {
+    color: red;
   }
   </style>
   
