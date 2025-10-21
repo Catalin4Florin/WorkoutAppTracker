@@ -22,12 +22,12 @@
   <style scoped>
   /* Full-screen background */
   .home-background {
-    position: fixed; /* ✅ Locks background in place */
+    position: fixed; 
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-image: url('/notepad.jpg');
+    background-image: url('/jayCutler.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -35,7 +35,7 @@
     justify-content: center;
     align-items: center;
     color: white;
-    overflow: hidden; /* ✅ Prevents internal scroll */
+    overflow: hidden;
   }
   
   /* Centered content box */

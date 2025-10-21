@@ -8,6 +8,7 @@
   
           <template v-if="user">
             <button @click="goToWorkouts">My Workouts</button>
+            <button @click="goToProfile">Profile</button> <!-- ✅ New -->
             <button @click="logout">Logout</button>
           </template>
   
@@ -20,18 +21,21 @@
     </nav>
   </template>
   
-  
   <script setup>
   import { useRouter } from 'vue-router'
   import { getAuth, signOut } from 'firebase/auth'
   import { useAuth } from '../composables/useAuth'
   import { ref } from 'vue'
   
-  const goToLogin = () => router.push('/login')
   const router = useRouter()
   const auth = getAuth()
   const { user } = useAuth()
   const showLogoutPopup = ref(false)
+  
+  const goHome = () => router.push('/')
+  const goToLogin = () => router.push('/login')
+  const goToWorkouts = () => router.push('/myworkouts')
+  const goToProfile = () => router.push('/profile') // ✅ New
   
   const logout = async () => {
     try {
@@ -46,9 +50,6 @@
       console.error('Error logging out:', err)
     }
   }
-  
-  const goHome = () => router.push('/')
-  const goToWorkouts = () => router.push('/myworkouts')
   </script>
   
   <style scoped>
