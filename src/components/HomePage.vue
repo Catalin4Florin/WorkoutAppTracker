@@ -9,17 +9,21 @@
         Whether you're training for strength, endurance, or aesthetics — this app helps you
         stay organized and motivated every step of the way.
       </p>
-      <ul>
-        <li>💪 Create detailed workouts with sets, reps, and weights.</li>
-        <li>📈 Review your previous sessions to measure progress.</li>
-      </ul>
+      <div class="features">
+        <p>💪 Create detailed workouts with sets, reps, and weights.</p>
+        <p>📈 Review your previous sessions to measure progress.</p>
+      </div>
       <p>Start now — and take control of your training!</p>
+
+      <div v-if="!user" class="register-btn-container">
+        <router-link to="/login" class="register-btn">Register Now</router-link>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { db } from '../firebase'
 import { useAuth } from '../composables/useAuth'
 import { doc, getDoc } from 'firebase/firestore'
@@ -33,21 +37,16 @@ const loadNickname = async () => {
     const userRef = doc(db, 'users', user.value.uid)
     const snapshot = await getDoc(userRef)
     if (snapshot.exists()) {
-      const data = snapshot.data()
-      nickname.value = data.nickname || ''
+      nickname.value = snapshot.data().nickname || ''
     }
   } catch (err) {
     console.error('Error loading nickname:', err)
   }
 }
 
-watch(
-  [user, loading],
-  ([u, isLoading]) => {
-    if (!isLoading && u) loadNickname()
-  },
-  { immediate: true }
-)
+watch([user, loading], ([u, isLoading]) => {
+  if (!isLoading && u) loadNickname()
+}, { immediate: true })
 </script>
 
 <style scoped>
@@ -73,5 +72,30 @@ watch(
 .title {
   color: #ffa500;
   margin-bottom: 15px;
+}
+
+.features {
+  margin: 20px 0;
+}
+
+.features p {
+  margin: 8px 0;
+}
+
+.register-btn-container {
+  margin-top: 20px;
+}
+
+.register-btn {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-btn:hover {
+  background-color: #2563eb;
 }
 </style>
