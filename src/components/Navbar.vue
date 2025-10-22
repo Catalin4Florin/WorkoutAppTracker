@@ -97,8 +97,7 @@ const logoutAndClose = async () => {
 }
 
 .navbar-links a,
-.navbar-links button,
-.lang-btn {
+.navbar-links button {
   background: none;
   border: 1px solid #ffa500;
   color: white;
@@ -109,6 +108,20 @@ const logoutAndClose = async () => {
   transition: all 0.2s ease;
   font-weight: 600;
 }
+
+
+.lang-btn {
+  background: none;
+  border: 1px solid #ffa500;
+  color: #ffa500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
 
 .navbar-links a:hover,
 .navbar-links button:hover,
@@ -137,6 +150,11 @@ const logoutAndClose = async () => {
 }
 
 @media (max-width: 1024px) {
+
+  .navbar {
+    padding: 8px 14px;
+  }
+  
   .burger {
     display: block;
   }
