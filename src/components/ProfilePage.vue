@@ -62,6 +62,12 @@
         <p v-if="passwordMessage" class="message">{{ passwordMessage }}</p>
       </div>
     </div>
+
+    <transition name="fade">
+      <div v-if="showPopup" class="success-popup">
+        {{ popupMessage }}
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -83,6 +89,8 @@ const showPasswordModal = ref(false)
 const newPassword = ref('')
 const updatingPassword = ref(false)
 const passwordMessage = ref('')
+const showPopup = ref(false)
+const popupMessage = ref('')
 
 const loadUserProfile = async () => {
   if (!user.value) return
@@ -130,7 +138,9 @@ const saveNickname = async () => {
   try {
     const userRef = doc(db, 'users', user.value.uid)
     await updateDoc(userRef, { nickname: profile.value.nickname })
-    alert(t('nicknameUpdated'))
+    popupMessage.value = t('nicknameUpdated')
+    showPopup.value = true
+    setTimeout(() => (showPopup.value = false), 1800)
   } catch (err) {
     console.error('Error saving nickname:', err)
   }
@@ -231,7 +241,6 @@ button:hover {
   font-size: 1rem;
 }
 
-/* Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -281,5 +290,28 @@ button:hover {
   margin-top: 10px;
   font-size: 0.9rem;
   color: #ffb347;
+}
+
+/* Success popup */
+.success-popup {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #198754;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 0 0 15px rgba(25, 135, 84, 0.7);
+  animation: fadeInOut 1.8s ease-in-out forwards;
+  z-index: 1200;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, 20px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -20px); }
 }
 </style>
