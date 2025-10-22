@@ -27,6 +27,20 @@
     "loadingWorkouts": "Loading workouts...",
     "noWorkouts": "No workouts found.",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "newWorkout": "New Workout",
+    "editWorkout": "Edit Workout",
+    "updateWorkout": "Update Workout",
+    "addExercise": "Add Exercise",
+    "addSet": "Add Set",
+    "removeExercise": "Remove Exercise",
+    "removeSet": "Remove Set",
+    "close": "Close",
+    "muscleGroup": "Muscle Group",
+    "selectMuscle": "Select Muscle",
+    "exercise": "Exercise",
+    "selectExercise": "Select Exercise",
+    "exercises": "exercises",
+    "fillAllBeforeSave": "Please fill out all exercises and sets before saving."
   }
   

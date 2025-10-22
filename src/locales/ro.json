@@ -27,6 +27,20 @@
     "loadingWorkouts": "Se încarcă antrenamentele...",
     "noWorkouts": "Nu există antrenamente.",
     "edit": "Editează",
-    "delete": "Șterge"
+    "delete": "Șterge",
+    "newWorkout": "Antrenament nou",
+    "editWorkout": "Editează antrenamentul",
+    "updateWorkout": "Actualizează antrenamentul",
+    "addExercise": "Adaugă exercițiu",
+    "addSet": "Adaugă serie",
+    "removeExercise": "Șterge exercițiul",
+    "removeSet": "Șterge seria",
+    "close": "Închide",
+    "muscleGroup": "Grup muscular",
+    "selectMuscle": "Selectează grupul muscular",
+    "exercise": "Exercițiu",
+    "selectExercise": "Selectează exercițiul",
+    "exercises": "exerciții",
+    "fillAllBeforeSave": "Completează toate exercițiile și seriile înainte de a salva."
   }
   
