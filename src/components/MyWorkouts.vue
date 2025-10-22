@@ -232,16 +232,22 @@ const confirmDelete = ref(null)
 const showPopup = ref(false)
 const popupMessage = ref('')
 const popupType = ref('success')
+const createdFromRecommended = ref(false)
 
 const openNewWorkout = () => {
   showForm.value = true
   exercises.value = [{ muscle: '', name: '', sets: [{ reps: null, weight: null }] }]
+  createdFromRecommended.value = false
 }
 
-const closeNewWorkout = () => {
+const closeNewWorkout = async () => {
+  if (createdFromRecommended.value && editingWorkout.value?.id) {
+    await deleteDoc(doc(db, 'workouts', editingWorkout.value.id))
+  }
   showForm.value = false
   exercises.value = []
   editingWorkout.value = null
+  createdFromRecommended.value = false
 }
 
 const openViewWorkout = (workout) => {
@@ -303,6 +309,7 @@ const saveWorkout = async () => {
       await updateDoc(workoutRef, { exercises: exercises.value })
       showPopupMessage(t('workoutUpdated'), 'success')
       editingWorkout.value = null
+      createdFromRecommended.value = false
     } else {
       const newWorkout = {
         uid: user.value.uid,
@@ -380,11 +387,15 @@ watch([user, loading], async ([u, isLoading]) => {
 
     if (route.query.editWorkout) {
       const newWorkout = workouts.value.find(w => w.id === route.query.editWorkout)
-      if (newWorkout) startEditWorkout(newWorkout)
+      if (newWorkout) {
+        startEditWorkout(newWorkout)
+        createdFromRecommended.value = true
+      }
     }
   }
 }, { immediate: true })
 </script>
+
 
 <style scoped>
 .workouts-background {
