@@ -61,6 +61,11 @@
     "passwordTooShort": "Parola trebuie să aibă cel puțin 6 caractere.",
     "passwordUpdated": "Parola a fost actualizată cu succes!",
     "reloginToChange": "Te rugăm să te autentifici din nou pentru a schimba parola.",
-    "passwordUpdateFailed": "Actualizarea parolei a eșuat. Încearcă din nou."
+    "passwordUpdateFailed": "Actualizarea parolei a eșuat. Încearcă din nou.",
+    "workoutSaved": "Antrenament salvat!",
+"workoutUpdated": "Antrenament actualizat!",
+"workoutDeleted": "Antrenament șters!",
+"confirmDeleteWorkout": "Ești sigur că vrei să ștergi acest antrenament?",
+"confirm": "Confirmă"
   }
   

@@ -61,6 +61,11 @@
     "passwordTooShort": "Password must be at least 6 characters.",
     "passwordUpdated": "Password updated successfully!",
     "reloginToChange": "Please log in again to change your password.",
-    "passwordUpdateFailed": "Failed to update password. Try again."
+    "passwordUpdateFailed": "Failed to update password. Try again.",
+    "workoutSaved": "Workout saved!",
+    "workoutUpdated": "Workout updated!",
+    "workoutDeleted": "Workout deleted!",
+    "confirmDeleteWorkout": "Are you sure you want to delete this workout?",
+    "confirm": "Confirm"
   }
   

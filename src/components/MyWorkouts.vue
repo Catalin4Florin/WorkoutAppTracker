@@ -272,7 +272,7 @@ const startEditWorkout = (workout) => {
 const validateWorkout = () => {
   if (exercises.value.length === 0) return false
   for (const ex of exercises.value) {
-    if (!ex.muscle || !ex.name) return false
+    if (!ex.muscle || !ex.name || !ex.sets.length) return false
     for (const set of ex.sets) {
       if (!set.reps || !set.weight) return false
     }
