@@ -185,30 +185,34 @@ const startWorkout = async (workout) => {
   border-radius: 12px;
   padding: 30px;
   width: 90%;
-  max-width: 700px;
+  max-width: 1000px;
   margin-top: 30px;
   color: white;
+  text-align: center;
 }
 
 .recommended-section h2 {
   color: #ffa500;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   text-align: center;
 }
 
 .workout-list {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 20px;
+  align-items: stretch;
+  gap: 25px;
+  flex-wrap: nowrap; 
 }
 
 .workout-card {
+  flex: 1;
+  min-width: 250px;
+  max-width: 300px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 10px;
-  padding: 16px;
-  width: 200px;
+  padding: 18px;
   text-align: left;
   transition: transform 0.2s ease;
 }
@@ -244,21 +248,16 @@ const startWorkout = async (workout) => {
   background: #157347;
 }
 
-@media (max-width: 768px) {
-  .overlay {
-    width: 88%;
-    max-width: 360px;
-    padding: 24px 18px;
-    margin: 60px auto;
+@media (max-width: 900px) {
+  .workout-list {
+    flex-wrap: wrap;
   }
-
-  .recommended-section {
-    padding: 20px;
-    margin-top: 20px;
-  }
-
   .workout-card {
     width: 90%;
+    max-width: 400px;
+  }
+  .recommended-section {
+    padding: 20px;
   }
 }
 </style>
