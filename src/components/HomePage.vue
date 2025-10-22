@@ -9,22 +9,25 @@
     </transition>
 
     <div class="overlay">
-      <h1 class="title">{{ $t('welcomeTitle') }}, {{ userDisplayName }}</h1>
-      <p>{{ $t('welcomeText') }}</p>
+      <h1 class="title">Welcome to Workout Tracker</h1>
+      <p>
+        Track your workouts, log your progress, and stay consistent with your fitness goals.
+        Whether you're training for strength, endurance, or aesthetics — this app helps you
+        stay organized and motivated every step of the way.
+      </p>
 
       <div class="features">
-        <p>💪 {{ $t('feature1') }}</p>
-        <p>📈 {{ $t('feature2') }}</p>
+        <p>💪 Create detailed workouts with sets, reps, and weights.</p>
+        <p>📈 Review your previous sessions to measure progress.</p>
       </div>
 
+      <p class="cta">Start now — and take control of your training!</p>
+
       <div class="register-btn-container" v-if="!user">
-        <router-link to="/login" class="register-btn">
-          {{ $t('registerNow') }}
-        </router-link>
+        <router-link to="/login" class="register-btn">Register Now</router-link>
       </div>
     </div>
 
-    <!-- ✅ Recommended Workouts -->
     <div v-if="user" class="recommended-section">
       <h2>🔥 Recommended Workouts</h2>
       <div class="workout-list">
@@ -49,21 +52,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { ref, onMounted } from 'vue'
 import { db } from '../firebase'
 import { useAuth } from '../composables/useAuth'
 import { addDoc, collection } from 'firebase/firestore'
+import { useRouter } from 'vue-router'
 
-const { t } = useI18n()
 const { user } = useAuth()
+const router = useRouter()
 
-// rotating background
-const backgroundImages = [
-  '/arnoldGym.jpg',
-  '/ronnieColeman.jpg',
-  '/jayCutler.jpg'
-]
+const backgroundImages = ['/arnoldGym.jpg', '/ronnieColeman.jpg', '/jayCutler.jpg']
 const currentImage = ref(0)
 onMounted(() => {
   setInterval(() => {
@@ -71,13 +69,6 @@ onMounted(() => {
   }, 8000)
 })
 
-// ✅ show username if logged in
-const userDisplayName = computed(() => {
-  if (!user.value) return 'Athlete'
-  return user.value.displayName || user.value.email.split('@')[0]
-})
-
-// ✅ Recommended workouts
 const recommendedWorkouts = [
   {
     name: 'Push Day',
@@ -109,19 +100,14 @@ const workoutsCollection = collection(db, 'workouts')
 
 const startWorkout = async (workout) => {
   if (!user.value) return
-
   const newWorkout = {
     uid: user.value.uid,
     date: new Date().toISOString(),
-    exercises: workout.exercises.map((ex) => ({
-      ...ex,
-      sets: [{ reps: null, weight: null }]
-    }))
+    exercises: workout.exercises.map(ex => ({ ...ex, sets: [{ reps: null, weight: null }] }))
   }
-
   try {
-    await addDoc(workoutsCollection, newWorkout)
-    alert('Workout added to My Workouts!')
+    const docRef = await addDoc(workoutsCollection, newWorkout)
+    router.push({ path: '/myworkouts', query: { editWorkout: docRef.id } })
   } catch (err) {
     console.error('Error adding recommended workout:', err)
   }
@@ -172,6 +158,14 @@ const startWorkout = async (workout) => {
   margin: 20px 0;
 }
 
+.cta {
+  margin-top: 20px;
+}
+
+.register-btn-container {
+  margin-top: 20px;
+}
+
 .register-btn {
   background-color: #ffa500;
   color: white;
@@ -185,7 +179,6 @@ const startWorkout = async (workout) => {
   background-color: #ae7202;
 }
 
-/* ✅ Recommended Section */
 .recommended-section {
   z-index: 1;
   background: rgba(0, 0, 0, 0.65);
@@ -251,7 +244,6 @@ const startWorkout = async (workout) => {
   background: #157347;
 }
 
-/* ✅ Mobile */
 @media (max-width: 768px) {
   .overlay {
     width: 88%;

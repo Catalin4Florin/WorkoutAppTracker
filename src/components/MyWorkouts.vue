@@ -182,6 +182,9 @@ import {
   deleteDoc
 } from 'firebase/firestore'
 
+import { useRoute } from 'vue-router'
+const route = useRoute()
+
 const { t } = useI18n()
 const { user, loading } = useAuth()
 
@@ -371,8 +374,15 @@ const loadWorkouts = async () => {
   }
 }
 
-watch([user, loading], ([u, isLoading]) => {
-  if (!isLoading && u) loadWorkouts()
+watch([user, loading], async ([u, isLoading]) => {
+  if (!isLoading && u) {
+    await loadWorkouts()
+
+    if (route.query.editWorkout) {
+      const newWorkout = workouts.value.find(w => w.id === route.query.editWorkout)
+      if (newWorkout) startEditWorkout(newWorkout)
+    }
+  }
 }, { immediate: true })
 </script>
 
