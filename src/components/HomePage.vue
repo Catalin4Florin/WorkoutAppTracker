@@ -122,6 +122,7 @@ onUnmounted(() => clearInterval(intervalId))
   width: 90%;
   text-align: center;
   margin-top: 10px;
+  box-sizing: border-box;
 }
 
 .title {
@@ -153,11 +154,11 @@ onUnmounted(() => clearInterval(intervalId))
 .register-btn:hover {
   background-color: #ae7202;
 }
-
 @media (max-width: 768px) {
   .overlay {
-    max-width: 90%;
-    padding: 24px;
+    width: 88%;
+    max-width: 360px;
+    padding: 20px 16px;
     margin-top: 60px;
   }
 
