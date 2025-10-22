@@ -41,6 +41,27 @@
     "exercise": "Exercițiu",
     "selectExercise": "Selectează exercițiul",
     "exercises": "exerciții",
-    "fillAllBeforeSave": "Completează toate exercițiile și seriile înainte de a salva."
+    "fillAllBeforeSave": "Completează toate exercițiile și seriile înainte de a salva.",
+    "profileTitle": "Profil",
+    "userProfile": "Profil utilizator",
+    "loadingProfile": "Se încarcă profilul...",
+    "email": "Email",
+    "nickname": "Poreclă",
+    "save": "Salvează",
+    "totalWorkouts": "Număr total de antrenamente",
+    "totalWeightLifted": "Greutate totală ridicată",
+    "muscleGroupsTrained": "Grupe musculare antrenate",
+    "times": "ori",
+    "changePassword": "Schimbă parola",
+    "noProfileData": "Nu există date de profil.",
+    "enterNewPassword": "Introdu parola nouă mai jos:",
+    "newPassword": "Parolă nouă",
+    "updating": "Se actualizează…",
+    "savePassword": "Salvează parola",
+    "nicknameUpdated": "Poreclă actualizată!",
+    "passwordTooShort": "Parola trebuie să aibă cel puțin 6 caractere.",
+    "passwordUpdated": "Parola a fost actualizată cu succes!",
+    "reloginToChange": "Te rugăm să te autentifici din nou pentru a schimba parola.",
+    "passwordUpdateFailed": "Actualizarea parolei a eșuat. Încearcă din nou."
   }
   

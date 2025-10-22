@@ -41,6 +41,27 @@
     "exercise": "Exercise",
     "selectExercise": "Select Exercise",
     "exercises": "exercises",
-    "fillAllBeforeSave": "Please fill out all exercises and sets before saving."
+    "fillAllBeforeSave": "Please fill out all exercises and sets before saving.",
+    "profileTitle": "Profile",
+    "userProfile": "User Profile",
+    "loadingProfile": "Loading profile...",
+    "email": "Email",
+    "nickname": "Nickname",
+    "save": "Save",
+    "totalWorkouts": "Total Workouts",
+    "totalWeightLifted": "Total Weight Lifted",
+    "muscleGroupsTrained": "Muscle Groups Trained",
+    "times": "times",
+    "changePassword": "Change Password",
+    "noProfileData": "No profile data found.",
+    "enterNewPassword": "Please enter your new password below:",
+    "newPassword": "New password",
+    "updating": "Updating…",
+    "savePassword": "Save Password",
+    "nicknameUpdated": "Nickname updated!",
+    "passwordTooShort": "Password must be at least 6 characters.",
+    "passwordUpdated": "Password updated successfully!",
+    "reloginToChange": "Please log in again to change your password.",
+    "passwordUpdateFailed": "Failed to update password. Try again."
   }
   

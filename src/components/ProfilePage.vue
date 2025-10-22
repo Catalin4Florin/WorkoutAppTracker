@@ -1,59 +1,61 @@
 <template>
   <div class="profile-container">
     <div class="profile-card">
-      <h2>{{ profile?.nickname ? profile.nickname + "'s Profile" : 'User Profile' }}</h2>
+      <h2>
+        {{ profile?.nickname ? profile.nickname + ' ' + $t('profileTitle') : $t('userProfile') }}
+      </h2>
 
-      <div v-if="loadingProfile">Loading profile...</div>
+      <div v-if="loadingProfile">{{ $t('loadingProfile') }}</div>
 
       <div v-else-if="profile">
-        <p><strong>Email:</strong> {{ user?.email }}</p>
+        <p><strong>{{ $t('email') }}:</strong> {{ user?.email }}</p>
 
         <label>
-          <strong>Nickname:</strong>
+          <strong>{{ $t('nickname') }}:</strong>
           <input v-model="profile.nickname" type="text" />
         </label>
-        <button @click="saveNickname">Save</button>
+        <button @click="saveNickname">{{ $t('save') }}</button>
 
-        <p><strong>Total Workouts:</strong> {{ profile.totalWorkouts }}</p>
-        <p><strong>Total Weight Lifted:</strong> {{ profile.totalWeight }} kg</p>
+        <p><strong>{{ $t('totalWorkouts') }}:</strong> {{ profile.totalWorkouts }}</p>
+        <p><strong>{{ $t('totalWeightLifted') }}:</strong> {{ profile.totalWeight }} kg</p>
 
         <div v-if="muscleStats && Object.keys(muscleStats).length" class="muscle-stats">
-  <h3>Muscle Groups Trained</h3>
-  <div class="muscle-stats-inline">
-    <p v-for="(count, muscle) in muscleStats" :key="muscle">
-      <strong>{{ muscle }}:</strong> {{ count }} times
-    </p>
-  </div>
-</div>
+          <h3>{{ $t('muscleGroupsTrained') }}</h3>
+          <div class="muscle-stats-inline">
+            <p v-for="(count, muscle) in muscleStats" :key="muscle">
+              <strong>{{ muscle }}:</strong> {{ count }} {{ $t('times') }}
+            </p>
+          </div>
+        </div>
 
         <hr />
 
         <button @click="showPasswordModal = true" class="change-password-btn">
-          Change Password
+          {{ $t('changePassword') }}
         </button>
       </div>
 
       <div v-else>
-        <p>No profile data found.</p>
+        <p>{{ $t('noProfileData') }}</p>
       </div>
     </div>
 
     <div v-if="showPasswordModal" class="modal-backdrop" @click.self="closePasswordModal">
       <div class="modal">
-        <h3>Change Password</h3>
-        <p>Please enter your new password below:</p>
+        <h3>{{ $t('changePassword') }}</h3>
+        <p>{{ $t('enterNewPassword') }}</p>
 
         <input
           v-model="newPassword"
           type="password"
-          placeholder="New password"
+          :placeholder="$t('newPassword')"
           class="password-input"
         />
 
         <div class="modal-actions">
-          <button class="btn-secondary" @click="closePasswordModal">Cancel</button>
+          <button class="btn-secondary" @click="closePasswordModal">{{ $t('cancel') }}</button>
           <button class="btn-primary" @click="changePassword" :disabled="updatingPassword">
-            {{ updatingPassword ? 'Updating…' : 'Save Password' }}
+            {{ updatingPassword ? $t('updating') : $t('savePassword') }}
           </button>
         </div>
 
@@ -69,7 +71,9 @@ import { db } from '../firebase'
 import { useAuth } from '../composables/useAuth'
 import { doc, getDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore'
 import { updatePassword } from 'firebase/auth'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const { user, loading } = useAuth()
 const profile = ref(null)
 const loadingProfile = ref(true)
@@ -89,7 +93,6 @@ const loadUserProfile = async () => {
       profile.value = snapshot.data()
     }
 
-    // Calculate per-muscle statistics
     const workoutsRef = collection(db, 'workouts')
     const q = query(workoutsRef, where('uid', '==', user.value.uid))
     const workoutsSnap = await getDocs(q)
@@ -127,7 +130,7 @@ const saveNickname = async () => {
   try {
     const userRef = doc(db, 'users', user.value.uid)
     await updateDoc(userRef, { nickname: profile.value.nickname })
-    alert('Nickname updated!')
+    alert(t('nicknameUpdated'))
   } catch (err) {
     console.error('Error saving nickname:', err)
   }
@@ -135,22 +138,22 @@ const saveNickname = async () => {
 
 const changePassword = async () => {
   if (!newPassword.value || newPassword.value.length < 6) {
-    passwordMessage.value = 'Password must be at least 6 characters.'
+    passwordMessage.value = t('passwordTooShort')
     return
   }
 
   updatingPassword.value = true
   try {
     await updatePassword(user.value, newPassword.value)
-    passwordMessage.value = 'Password updated successfully!'
+    passwordMessage.value = t('passwordUpdated')
     newPassword.value = ''
     setTimeout(() => closePasswordModal(), 1500)
   } catch (err) {
     console.error('Error updating password:', err)
     if (err.code === 'auth/requires-recent-login') {
-      passwordMessage.value = 'Please log in again to change your password.'
+      passwordMessage.value = t('reloginToChange')
     } else {
-      passwordMessage.value = 'Failed to update password. Try again.'
+      passwordMessage.value = t('passwordUpdateFailed')
     }
   } finally {
     updatingPassword.value = false
