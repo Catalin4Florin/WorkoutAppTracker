@@ -16,12 +16,15 @@
           @click="openViewWorkout(workout)"
         >
           <h3>{{ workout.date }}</h3>
-          <p class="workout-info">{{ workout.exercises.length }} {{ $t('exercises') }}</p>
+          <p class="workout-info">
+            {{ workout.exercises.length }} {{ $t('exercises') }}
+          </p>
           <p class="workout-muscles">{{ getMuscleSummary(workout.exercises) }}</p>
         </div>
       </div>
     </div>
 
+    <!-- Workout form modal -->
     <div
       v-if="showForm"
       class="modal-backdrop"
@@ -74,20 +77,30 @@
               {{ $t('weight') }}
               <input v-model.number="set.weight" type="number" min="0" placeholder="0" />
             </label>
-            <button @click="removeSet(exIndex, setIndex)">{{ $t('removeSet') }}</button>
+            <button @click="removeSet(exIndex, setIndex)">
+              {{ $t('removeSet') }}
+            </button>
           </div>
 
           <div class="exercise-actions">
-            <button class="add-set" @click="addSet(exIndex)">{{ $t('addSet') }}</button>
-            <button class="remove-exercise" @click="removeExercise(exIndex)">{{ $t('removeExercise') }}</button>
+            <button class="add-set" @click="addSet(exIndex)">
+              {{ $t('addSet') }}
+            </button>
+            <button class="remove-exercise" @click="removeExercise(exIndex)">
+              {{ $t('removeExercise') }}
+            </button>
           </div>
           <hr />
         </div>
 
-        <button @click="addExercise" class="add-exercise">{{ $t('addExercise') }}</button>
+        <button @click="addExercise" class="add-exercise">
+          {{ $t('addExercise') }}
+        </button>
 
         <div class="form-actions">
-          <button @click="closeNewWorkout" class="cancel-workout">{{ $t('cancel') }}</button>
+          <button @click="closeNewWorkout" class="cancel-workout">
+            {{ $t('cancel') }}
+          </button>
           <button @click="saveWorkout" class="save-workout">
             {{ editingWorkout ? $t('updateWorkout') : $t('saveWorkout') }}
           </button>
@@ -95,6 +108,7 @@
       </div>
     </div>
 
+    <!-- Workout view modal -->
     <div
       v-if="viewWorkout"
       class="modal-backdrop"
@@ -115,8 +129,12 @@
           </li>
         </ul>
         <div class="form-actions">
-          <button class="cancel-workout" @click="closeViewWorkout">{{ $t('close') }}</button>
-          <button class="save-workout" @click="startEditWorkout(viewWorkout)">{{ $t('edit') }}</button>
+          <button class="cancel-workout" @click="closeViewWorkout">
+            {{ $t('close') }}
+          </button>
+          <button class="save-workout" @click="startEditWorkout(viewWorkout)">
+            {{ $t('edit') }}
+          </button>
         </div>
       </div>
     </div>
@@ -128,7 +146,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { db } from '../firebase'
 import { useAuth } from '../composables/useAuth'
 import {
@@ -142,6 +161,7 @@ import {
   updateDoc
 } from 'firebase/firestore'
 
+const { t } = useI18n()
 const { user, loading } = useAuth()
 
 const exerciseOptions = [
@@ -237,7 +257,7 @@ const validateWorkout = () => {
 const saveWorkout = async () => {
   if (!user.value || exercises.value.length === 0) return
   if (!validateWorkout()) {
-    popupMessage.value = $t('fillAllBeforeSave')
+    popupMessage.value = t('fillAllBeforeSave')
     showPopup.value = true
     setTimeout(() => (showPopup.value = false), 1800)
     return
@@ -301,11 +321,9 @@ const loadWorkouts = async () => {
   }
 }
 
-onMounted(() => {
-  watch([user, loading], ([u, isLoading]) => {
-    if (!isLoading && u) loadWorkouts()
-  }, { immediate: true })
-})
+watch([user, loading], ([u, isLoading]) => {
+  if (!isLoading && u) loadWorkouts()
+}, { immediate: true })
 </script>
 
 <style scoped>
@@ -313,7 +331,7 @@ onMounted(() => {
   position: relative;
   min-height: 100vh;
   width: 100vw;
-  background-image: url('/notepad.jpg');
+  background-image: url('../assets/notepad.jpg');
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
