@@ -243,12 +243,18 @@ const openNewWorkout = () => {
 const closeNewWorkout = async () => {
   try {
     const premadeId = route.query.editWorkout
+    let deletedId = null
 
     if (createdFromRecommended.value && premadeId) {
-      const docRef = doc(db, 'workouts', premadeId)
-      await deleteDoc(docRef)
+      await deleteDoc(doc(db, 'workouts', premadeId))
+      deletedId = premadeId
     } else if (createdFromRecommended.value && editingWorkout.value?.id) {
       await deleteDoc(doc(db, 'workouts', editingWorkout.value.id))
+      deletedId = editingWorkout.value.id
+    }
+
+    if (deletedId) {
+      workouts.value = workouts.value.filter(w => w.id !== deletedId)
     }
   } catch (err) {
     console.error('Error deleting premade workout:', err)
