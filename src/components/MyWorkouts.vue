@@ -638,32 +638,45 @@ h1 {
     border: 1px solid #555;
   }
 
+  .field select {
+    width: 100%;
+    height: 46px;
+    font-size: 1rem;
+    padding: 8px 10px;
+    box-sizing: border-box;
+  }
+
   .set-input {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     gap: 8px;
     margin-bottom: 10px;
   }
 
   .set-input label {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
     width: 100%;
   }
 
   .set-input input {
     width: 100%;
+    height: 46px;
+    font-size: 1rem;
+    border-radius: 6px;
+    background: #2f2f2f;
+    border: 1px solid #555;
+    color: #fff;
+    padding: 0 10px;
+    box-sizing: border-box;
   }
 
   .set-input button {
-    align-self: flex-end;
     width: 100%;
     margin-top: 4px;
-    height: 36px;
-    font-size: 0.9rem;
+    height: 40px;
+    font-size: 0.95rem;
     background: #b02a37;
+    border: none;
     border-radius: 6px;
     color: #fff;
   }
@@ -676,6 +689,8 @@ h1 {
 
   .exercise-actions button {
     width: 100%;
+    height: 42px;
+    font-size: 0.95rem;
   }
 
   .form-actions {
@@ -687,11 +702,13 @@ h1 {
 
   .form-actions button {
     flex: 1;
-    min-width: 90px;
-    max-width: 100px;
-    font-size: 0.9rem;
-    padding: 8px 10px;
+    min-width: 100px;
+    max-width: 120px;
+    font-size: 0.95rem;
+    height: 42px;
   }
 }
-
 </style>
+
+
+
