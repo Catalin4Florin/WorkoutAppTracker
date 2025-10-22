@@ -24,7 +24,6 @@
       </div>
     </div>
 
-    <!-- Workout form modal -->
     <div
       v-if="showForm"
       class="modal-backdrop"
@@ -86,7 +85,11 @@
             <button class="add-set" @click="addSet(exIndex)">
               {{ $t('addSet') }}
             </button>
-            <button class="remove-exercise" @click="removeExercise(exIndex)">
+            <button
+              class="remove-exercise"
+              @click="removeExercise(exIndex)"
+              :disabled="exercises.length === 1"
+            >
               {{ $t('removeExercise') }}
             </button>
           </div>
@@ -108,7 +111,6 @@
       </div>
     </div>
 
-    <!-- Workout view modal -->
     <div
       v-if="viewWorkout"
       class="modal-backdrop"
@@ -135,11 +137,29 @@
           <button class="save-workout" @click="startEditWorkout(viewWorkout)">
             {{ $t('edit') }}
           </button>
+          <button class="remove-exercise" @click="confirmDeleteWorkout(viewWorkout)">
+            {{ $t('delete') }}
+          </button>
         </div>
       </div>
     </div>
 
-    <div v-if="showPopup" class="error-popup">
+    <div v-if="confirmDelete" class="modal-backdrop">
+      <div class="modal confirm-modal">
+        <p>{{ $t('confirmDeleteWorkout') }}</p>
+        <div class="form-actions">
+          <button class="cancel-workout" @click="confirmDelete = null">{{ $t('cancel') }}</button>
+          <button class="remove-exercise" @click="deleteWorkout(confirmDelete)">
+            {{ $t('confirm') }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="showPopup"
+      :class="popupType === 'error' ? 'error-popup' : popupType === 'delete' ? 'delete-popup' : 'success-popup'"
+    >
       {{ popupMessage }}
     </div>
   </div>
@@ -158,7 +178,8 @@ import {
   where,
   orderBy,
   doc,
-  updateDoc
+  updateDoc,
+  deleteDoc
 } from 'firebase/firestore'
 
 const { t } = useI18n()
@@ -204,8 +225,10 @@ const showForm = ref(false)
 const exercises = ref([])
 const editingWorkout = ref(null)
 const viewWorkout = ref(null)
+const confirmDelete = ref(null)
 const showPopup = ref(false)
 const popupMessage = ref('')
+const popupType = ref('success')
 
 const openNewWorkout = () => {
   showForm.value = true
@@ -229,7 +252,9 @@ const closeViewWorkout = () => {
 const addExercise = () =>
   exercises.value.push({ muscle: '', name: '', sets: [{ reps: null, weight: null }] })
 
-const removeExercise = (index) => exercises.value.splice(index, 1)
+const removeExercise = (index) => {
+  if (exercises.value.length > 1) exercises.value.splice(index, 1)
+}
 
 const addSet = (exIndex) =>
   exercises.value[exIndex].sets.push({ reps: null, weight: null })
@@ -245,6 +270,7 @@ const startEditWorkout = (workout) => {
 }
 
 const validateWorkout = () => {
+  if (exercises.value.length === 0) return false
   for (const ex of exercises.value) {
     if (!ex.muscle || !ex.name) return false
     for (const set of ex.sets) {
@@ -254,12 +280,17 @@ const validateWorkout = () => {
   return true
 }
 
+const showPopupMessage = (message, type = 'success') => {
+  popupMessage.value = message
+  popupType.value = type
+  showPopup.value = true
+  setTimeout(() => (showPopup.value = false), 1800)
+}
+
 const saveWorkout = async () => {
   if (!user.value || exercises.value.length === 0) return
   if (!validateWorkout()) {
-    popupMessage.value = t('fillAllBeforeSave')
-    showPopup.value = true
-    setTimeout(() => (showPopup.value = false), 1800)
+    showPopupMessage(t('fillAllBeforeSave'), 'error')
     return
   }
 
@@ -267,6 +298,7 @@ const saveWorkout = async () => {
     if (editingWorkout.value) {
       const workoutRef = doc(db, 'workouts', editingWorkout.value.id)
       await updateDoc(workoutRef, { exercises: exercises.value })
+      showPopupMessage(t('workoutUpdated'), 'success')
       editingWorkout.value = null
     } else {
       const newWorkout = {
@@ -275,6 +307,7 @@ const saveWorkout = async () => {
         exercises: exercises.value
       }
       await addDoc(workoutsCollection, newWorkout)
+      showPopupMessage(t('workoutSaved'), 'success')
     }
 
     await loadWorkouts()
@@ -282,6 +315,23 @@ const saveWorkout = async () => {
     closeNewWorkout()
   } catch (err) {
     console.error('Error saving workout:', err)
+  }
+}
+
+const confirmDeleteWorkout = (workout) => {
+  confirmDelete.value = workout
+}
+
+const deleteWorkout = async (workout) => {
+  try {
+    await deleteDoc(doc(db, 'workouts', workout.id))
+    confirmDelete.value = null
+    await loadWorkouts()
+    await updateUserStats()
+    showPopupMessage(t('workoutDeleted'), 'delete')
+    closeViewWorkout()
+  } catch (err) {
+    console.error('Error deleting workout:', err)
   }
 }
 
@@ -526,21 +576,39 @@ h1 {
   background: #157347;
 }
 
+.success-popup,
+.delete-popup,
 .error-popup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.85);
-  color: #ff6b6b;
-  padding: 20px 30px;
+  padding: 22px 34px;
   border-radius: 12px;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   text-align: center;
   animation: fadeInOut 1.8s ease-in-out forwards;
-  box-shadow: 0 0 20px rgba(255, 100, 100, 0.4);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
   z-index: 1200;
+}
+
+.success-popup {
+  background-color: #198754;
+  color: white;
+  box-shadow: 0 0 20px rgba(25, 135, 84, 0.7);
+}
+
+.delete-popup {
+  background-color: #b02a37;
+  color: white;
+  box-shadow: 0 0 20px rgba(176, 42, 55, 0.7);
+}
+
+.error-popup {
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #ff6b6b;
+  box-shadow: 0 0 20px rgba(255, 100, 100, 0.4);
 }
 
 @keyframes fadeInOut {
