@@ -9,6 +9,12 @@
     "myWorkouts": "Antrenamentele Mele",
     "profile": "Profil",
     "login": "Autentificare",
-    "logout": "Deconectare"
+    "logout": "Deconectare",
+    "email": "Email",
+    "password": "Parolă",
+    "register": "Înregistrare",
+    "or": "sau",
+    "continueWithGoogle": "Continuă cu Google",
+    "loginSuccess": "Autentificare reușită!"
   }
   

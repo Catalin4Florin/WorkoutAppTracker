@@ -9,6 +9,12 @@
     "myWorkouts": "My Workouts",
     "profile": "Profile",
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "register": "Register",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "loginSuccess": "Successfully logged in!"
   }
   

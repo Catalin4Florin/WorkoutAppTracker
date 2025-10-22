@@ -1,25 +1,25 @@
 <template>
   <div class="login-background">
     <div class="login-box">
-      <h1>Welcome to Workout Tracker</h1>
+      <h1>{{ $t('welcome') }}</h1>
 
-      <input v-model="email" type="email" placeholder="Email" />
-      <input v-model="password" type="password" placeholder="Password" />
+      <input v-model="email" type="email" :placeholder="$t('email')" />
+      <input v-model="password" type="password" :placeholder="$t('password')" />
 
-      <button @click="handleLogin">Login</button>
-      <button @click="handleRegister">Register</button>
+      <button @click="handleLogin">{{ $t('login') }}</button>
+      <button @click="handleRegister">{{ $t('register') }}</button>
 
-      <div class="divider">or</div>
+      <div class="divider">{{ $t('or') }}</div>
 
       <button class="google-btn" @click="signInWithGoogle">
-        Continue with Google
+        {{ $t('continueWithGoogle') }}
       </button>
 
       <p v-if="error" class="error">{{ error }}</p>
     </div>
 
     <div v-if="showPopup" class="success-popup">
-      Successfully logged in!
+      {{ $t('loginSuccess') }}
     </div>
   </div>
 </template>
