@@ -86,6 +86,8 @@ onUnmounted(() => clearInterval(intervalId))
   justify-content: center;
   align-items: center;
   color: white;
+  padding-top: 70px;
+  box-sizing: border-box;
 }
 
 .background-image {
@@ -114,7 +116,9 @@ onUnmounted(() => clearInterval(intervalId))
   padding: 40px;
   border-radius: 12px;
   max-width: 600px;
+  width: 90%;
   text-align: center;
+  margin-top: 20px;
 }
 
 .title {
@@ -146,4 +150,16 @@ onUnmounted(() => clearInterval(intervalId))
 .register-btn:hover {
   background-color: #ae7202;
 }
+
+@media (max-width: 768px) {
+  .overlay {
+    max-width: 90%;
+    padding: 24px;
+    margin-top: 60px;
+  }
+  .home-container {
+    align-items: flex-start;
+  }
+}
 </style>
+
