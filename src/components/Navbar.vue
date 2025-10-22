@@ -96,6 +96,7 @@ const logoutAndClose = async () => {
   gap: 12px;
 }
 
+/* ✅ Unify <a> and <button> appearance */
 .navbar-links a,
 .navbar-links button {
   background: none;
@@ -107,9 +108,15 @@ const logoutAndClose = async () => {
   cursor: pointer;
   transition: all 0.2s ease;
   font-weight: 600;
+  line-height: 1.2;
+  font-size: 1rem;
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 110px; /* ensure same width feel */
+  text-align: center;
 }
 
-
+/* language button */
 .lang-btn {
   background: none;
   border: 1px solid #ffa500;
@@ -120,8 +127,9 @@ const logoutAndClose = async () => {
   cursor: pointer;
   transition: all 0.2s ease;
   font-weight: 600;
+  box-sizing: border-box;
+  line-height: 1.2;
 }
-
 
 .navbar-links a:hover,
 .navbar-links button:hover,
@@ -149,12 +157,12 @@ const logoutAndClose = async () => {
   opacity: 0.8;
 }
 
+/* ✅ Mobile */
 @media (max-width: 1024px) {
-
   .navbar {
     padding: 8px 14px;
   }
-  
+
   .burger {
     display: block;
   }
@@ -186,6 +194,7 @@ const logoutAndClose = async () => {
     width: 80%;
     text-align: center;
     margin: 10px 0;
+    min-width: unset;
   }
 
   .lang-btn {
@@ -208,3 +217,4 @@ const logoutAndClose = async () => {
   }
 }
 </style>
+
