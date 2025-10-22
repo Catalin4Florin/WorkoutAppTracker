@@ -623,71 +623,74 @@ h1 {
 }
 
 @media (max-width: 768px) {
-  .view-workout-modal {
+  .new-workout-modal {
     width: 85%;
     max-width: 340px;
-    padding: 16px 14px;
+    padding: 18px 14px;
     border-radius: 10px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    text-align: left;
+    box-sizing: border-box;
   }
 
-  .view-workout-modal h2 {
-    font-size: 1.1rem;
+  .exercise-form {
+    padding: 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #555;
+  }
+
+  .set-input {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
     margin-bottom: 10px;
-    text-align: center;
   }
 
-  .view-workout-modal ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    word-break: break-word;
+  .set-input label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
   }
 
-  .view-workout-modal li {
-    margin-bottom: 6px;
-    overflow-wrap: anywhere;
+  .set-input input {
+    width: 100%;
   }
 
-  .view-workout-modal strong {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 1rem;
-    font-weight: 600;
+  .set-input button {
+    align-self: flex-end;
+    width: 100%;
+    margin-top: 4px;
+    height: 36px;
+    font-size: 0.9rem;
+    background: #b02a37;
+    border-radius: 6px;
     color: #fff;
+  }
+
+  .exercise-actions {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .exercise-actions button {
+    width: 100%;
   }
 
   .form-actions {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
-    margin-top: 14px;
+    gap: 10px;
+    margin-top: 20px;
   }
 
   .form-actions button {
     flex: 1;
-    min-width: 85px;
-    max-width: 95px;
-    padding: 6px 10px;
-    font-size: 0.85rem;
-    border-radius: 8px;
-  }
-
-  .cancel-workout {
-    background: #6c757d;
-  }
-
-  .save-workout {
-    background: #198754;
-  }
-
-  .remove-exercise,
-  .delete-button {
-    background: #b02a37;
+    min-width: 90px;
+    max-width: 100px;
+    font-size: 0.9rem;
+    padding: 8px 10px;
   }
 }
 
