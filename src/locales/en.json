@@ -15,6 +15,18 @@
     "register": "Register",
     "or": "or",
     "continueWithGoogle": "Continue with Google",
-    "loginSuccess": "Successfully logged in!"
+    "loginSuccess": "Successfully logged in!",
+    "addNewWorkout": "Add New Workout",
+    "cancel": "Cancel",
+    "exerciseName": "Exercise Name",
+    "placeholderExercise": "e.g., Bench Press",
+    "sets": "Sets",
+    "reps": "Reps",
+    "weight": "Weight",
+    "saveWorkout": "Save Workout",
+    "loadingWorkouts": "Loading workouts...",
+    "noWorkouts": "No workouts found.",
+    "edit": "Edit",
+    "delete": "Delete"
   }
   

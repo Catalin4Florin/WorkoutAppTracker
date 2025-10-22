@@ -15,6 +15,18 @@
     "register": "Înregistrare",
     "or": "sau",
     "continueWithGoogle": "Continuă cu Google",
-    "loginSuccess": "Autentificare reușită!"
+    "loginSuccess": "Autentificare reușită!",
+    "addNewWorkout": "Adaugă antrenament nou",
+    "cancel": "Anulează",
+    "exerciseName": "Nume exercițiu",
+    "placeholderExercise": "ex: Împins la piept",
+    "sets": "Serii",
+    "reps": "Repetări",
+    "weight": "Greutate",
+    "saveWorkout": "Salvează antrenamentul",
+    "loadingWorkouts": "Se încarcă antrenamentele...",
+    "noWorkouts": "Nu există antrenamente.",
+    "edit": "Editează",
+    "delete": "Șterge"
   }
   
