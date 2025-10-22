@@ -623,32 +623,72 @@ h1 {
 }
 
 @media (max-width: 768px) {
-  .modal {
-    width: 94%;
-    padding: 20px;
+  .view-workout-modal {
+    width: 85%;
+    max-width: 340px;
+    padding: 16px 14px;
     border-radius: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: left;
   }
 
-  .set-input {
-    grid-template-columns: 1fr;
+  .view-workout-modal h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    text-align: center;
   }
 
-  .set-input button {
-    width: 100%;
-    height: auto;
+  .view-workout-modal ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-break: break-word;
   }
 
-  .exercise-actions {
-    flex-direction: column;
+  .view-workout-modal li {
+    margin-bottom: 6px;
+    overflow-wrap: anywhere;
   }
 
-  .add-set,
-  .remove-exercise,
-  .add-exercise,
-  .cancel-workout,
+  .view-workout-modal strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .form-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .form-actions button {
+    flex: 1;
+    min-width: 85px;
+    max-width: 95px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  .cancel-workout {
+    background: #6c757d;
+  }
+
   .save-workout {
-    width: 100%;
+    background: #198754;
+  }
+
+  .remove-exercise,
+  .delete-button {
+    background: #b02a37;
   }
 }
-</style>
 
+</style>
