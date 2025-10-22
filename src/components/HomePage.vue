@@ -80,7 +80,7 @@ onUnmounted(() => clearInterval(intervalId))
 <style scoped>
 .home-container {
   position: relative;
-  height: 100vh;
+  height: 100svh;
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -95,8 +95,11 @@ onUnmounted(() => clearInterval(intervalId))
   inset: 0;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   transition: opacity 1.5s ease-in-out;
   z-index: 0;
+  height: 100%;
+  width: 100%;
 }
 
 .fade-enter-active,
@@ -118,7 +121,7 @@ onUnmounted(() => clearInterval(intervalId))
   max-width: 600px;
   width: 90%;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .title {
@@ -157,8 +160,10 @@ onUnmounted(() => clearInterval(intervalId))
     padding: 24px;
     margin-top: 60px;
   }
+
   .home-container {
     align-items: flex-start;
+    padding-top: 70px;
   }
 }
 </style>

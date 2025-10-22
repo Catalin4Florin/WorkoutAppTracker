@@ -451,7 +451,7 @@ h1 {
   color: #fff;
   width: 90%;
   max-width: 640px;
-  padding: 28px;
+  padding: 24px;
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   overflow-y: auto;
@@ -527,26 +527,26 @@ h1 {
 
 .add-set {
   background: #444;
+  color: white;
   padding: 10px 14px;
   border-radius: 8px;
+  border: none;
 }
 
 .remove-exercise {
   background: #b02a37;
+  color: white;
   padding: 10px 14px;
   border-radius: 8px;
-}
-
-.footer-actions {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 6px;
+  border: none;
 }
 
 .add-exercise {
   background: #444;
+  color: white;
   padding: 10px 14px;
   border-radius: 8px;
+  border: none;
 }
 
 .form-actions {
@@ -558,8 +558,10 @@ h1 {
 
 .cancel-workout {
   background: #6c757d;
+  color: white;
   padding: 10px 14px;
   border-radius: 8px;
+  border: none;
 }
 
 .cancel-workout:hover {
@@ -568,8 +570,10 @@ h1 {
 
 .save-workout {
   background: #198754;
+  color: white;
   padding: 10px 14px;
   border-radius: 8px;
+  border: none;
 }
 
 .save-workout:hover {
@@ -617,4 +621,34 @@ h1 {
   85% { opacity: 1; }
   100% { opacity: 0; transform: translate(-50%, -40%); }
 }
+
+@media (max-width: 768px) {
+  .modal {
+    width: 94%;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .set-input {
+    grid-template-columns: 1fr;
+  }
+
+  .set-input button {
+    width: 100%;
+    height: auto;
+  }
+
+  .exercise-actions {
+    flex-direction: column;
+  }
+
+  .add-set,
+  .remove-exercise,
+  .add-exercise,
+  .cancel-workout,
+  .save-workout {
+    width: 100%;
+  }
+}
 </style>
+
