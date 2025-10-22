@@ -193,6 +193,7 @@ input {
   border-radius: 6px;
   padding: 6px;
   margin-left: 8px;
+  margin-right: 8px;
 }
 
 button {
