@@ -2,31 +2,33 @@
   <nav class="navbar">
     <router-link to="/" class="logo">🏋️ Workout Tracker</router-link>
 
-    <button class="lang-btn" @click="toggleLanguage">
-      {{ currentLang === 'en' ? '🇷🇴 Română' : '🇬🇧 English' }}
-    </button>
+    <div class="navbar-right">
+      <div class="navbar-links" :class="{ open: menuOpen }">
+        <router-link to="/" @click="closeMenu">{{ $t('home') }}</router-link>
+        <router-link to="/myworkouts" @click="closeMenu">{{ $t('myWorkouts') }}</router-link>
+        <router-link to="/profile" @click="closeMenu">{{ $t('profile') }}</router-link>
+        <button v-if="user" @click="logoutAndClose">{{ $t('logout') }}</button>
+        <router-link v-else to="/login" @click="closeMenu">{{ $t('login') }}</router-link>
+      </div>
 
-    <button class="burger" @click="toggleMenu">
-      <img
-        v-if="!menuOpen"
-        src="/burger.svg"
-        alt="Menu"
-        class="icon"
-      />
-      <img
-        v-else
-        src="/close.svg"
-        alt="Close"
-        class="icon"
-      />
-    </button>
+      <button class="lang-btn" @click="toggleLanguage">
+        {{ currentLang === 'en' ? '🇷🇴 Română' : '🇬🇧 English' }}
+      </button>
 
-    <div class="navbar-links" :class="{ open: menuOpen }">
-      <router-link to="/" @click="closeMenu">{{ $t('home') }}</router-link>
-      <router-link to="/myworkouts" @click="closeMenu">{{ $t('myWorkouts') }}</router-link>
-      <router-link to="/profile" @click="closeMenu">{{ $t('profile') }}</router-link>
-      <button v-if="user" @click="logoutAndClose">{{ $t('logout') }}</button>
-      <router-link v-else to="/login" @click="closeMenu">{{ $t('login') }}</router-link>
+      <button class="burger" @click="toggleMenu">
+        <img
+          v-if="!menuOpen"
+          src="/burger.svg"
+          alt="Menu"
+          class="icon"
+        />
+        <img
+          v-else
+          src="/close.svg"
+          alt="Close"
+          class="icon"
+        />
+      </button>
     </div>
   </nav>
 </template>
@@ -80,104 +82,54 @@ const logoutAndClose = async () => {
   color: #ffa500;
   text-decoration: none;
   font-size: 1.1rem;
-  white-space: nowrap;
-  flex-shrink: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.lang-btn {
-  background: none;
-  border: 1px solid #ffa500;
-  color: #ffa500;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  margin-right: 10px;
-}
-
-.lang-btn:hover {
-  background: #ffa500;
-  color: black;
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
 }
 
 .navbar-links a,
-.navbar-links button {
-  background: #1a1a1a;
+.navbar-links button,
+.lang-btn {
+  background: none;
+  border: 1px solid #ffa500;
   color: white;
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s;
-  font-weight: 500;
+  transition: all 0.2s ease;
+  font-weight: 600;
 }
 
 .navbar-links a:hover,
-.navbar-links button:hover {
-  background: #333;
+.navbar-links button:hover,
+.lang-btn:hover {
+  background: #ffa500;
+  color: black;
+  box-shadow: 0 0 10px #ffa500;
 }
 
 .burger {
   background: transparent;
   border: none;
   cursor: pointer;
-  display: none;
   padding: 0;
-  flex-shrink: 0;
+  display: none;
 }
 
 .burger .icon {
   width: 28px;
   height: 28px;
   transition: opacity 0.2s ease;
-}
-
-@media (max-width: 1024px) {
-  .burger {
-    display: block;
-  }
-}
-
-.burger {
-  display: none;
-  cursor: pointer;
-  flex-shrink: 0;
-  margin-left: 10px;
-}
-
-.burger-icon {
-  width: 28px;
-  height: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: opacity 0.2s ease;
-}
-
-.burger-icon span {
-  background: #ffa500;
-  height: 3px;
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-.burger-icon.active span:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 6px);
-}
-.burger-icon.active span:nth-child(2) {
-  opacity: 0;
-}
-.burger-icon.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -6px);
 }
 
 .burger:hover .icon {
@@ -187,6 +139,10 @@ const logoutAndClose = async () => {
 @media (max-width: 1024px) {
   .burger {
     display: block;
+  }
+
+  .navbar-right {
+    gap: 10px;
   }
 
   .navbar-links {
@@ -207,10 +163,19 @@ const logoutAndClose = async () => {
   }
 
   .navbar-links a,
-  .navbar-links button {
+  .navbar-links button,
+  .lang-btn {
     width: 80%;
     text-align: center;
     margin: 10px 0;
+  }
+
+  .lang-btn {
+    order: 1;
+  }
+
+  .burger {
+    order: 2;
   }
 
   @keyframes slideDown {
