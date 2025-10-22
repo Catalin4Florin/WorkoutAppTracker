@@ -10,21 +10,21 @@
 
     <div class="overlay">
       <h1 class="title">
-        Welcome to Workout Tracker<span v-if="nickname">, {{ nickname }}</span>
+        {{ $t('welcome') }}<span v-if="nickname">, {{ nickname }}</span>
       </h1>
-      <p>
-        Track your workouts, log your progress, and stay consistent with your fitness goals.
-        Whether you're training for strength, endurance, or aesthetics — this app helps you
-        stay organized and motivated every step of the way.
-      </p>
+      <p>{{ $t('intro') }}</p>
+
       <div class="features">
-        <p>💪 Create detailed workouts with sets, reps, and weights.</p>
-        <p>📈 Review your previous sessions to measure progress.</p>
+        <p>{{ $t('feature1') }}</p>
+        <p>{{ $t('feature2') }}</p>
       </div>
-      <p>Start now — and take control of your training!</p>
+
+      <p>{{ $t('cta') }}</p>
 
       <div v-if="!user" class="register-btn-container">
-        <router-link to="/login" class="register-btn">Register Now</router-link>
+        <router-link to="/login" class="register-btn">
+          {{ $t('registerNow') }}
+        </router-link>
       </div>
     </div>
   </div>
@@ -47,11 +47,7 @@ const loadNickname = async () => {
   try {
     const userRef = doc(db, 'users', user.value.uid)
     const snapshot = await getDoc(userRef)
-    if (snapshot.exists()) {
-      nickname.value = snapshot.data().nickname || ''
-    } else {
-      nickname.value = ''
-    }
+    nickname.value = snapshot.exists() ? snapshot.data().nickname || '' : ''
   } catch (err) {
     console.error('Error loading nickname:', err)
   }
@@ -67,12 +63,7 @@ watch(
   { immediate: true }
 )
 
-const images = [
-  '/jayCutler.jpg',
-  '/arnoldGym.jpg',
-  '/ronnieColeman.jpg',
-]
-
+const images = ['/jayCutler.jpg', '/arnoldGym.jpg', '/ronnieColeman.jpg']
 const currentIndex = ref(0)
 const currentImage = ref(images[currentIndex.value])
 let intervalId
@@ -81,12 +72,9 @@ onMounted(() => {
   intervalId = setInterval(() => {
     currentIndex.value = (currentIndex.value + 1) % images.length
     currentImage.value = images[currentIndex.value]
-  }, 5000) 
+  }, 5000)
 })
-
-onUnmounted(() => {
-  clearInterval(intervalId)
-})
+onUnmounted(() => clearInterval(intervalId))
 </script>
 
 <style scoped>

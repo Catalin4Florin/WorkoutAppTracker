@@ -2,6 +2,10 @@
   <nav class="navbar">
     <router-link to="/" class="logo">🏋️ Workout Tracker</router-link>
 
+    <button class="lang-btn" @click="toggleLanguage">
+      {{ currentLang === 'en' ? '🇷🇴 Română' : '🇬🇧 English' }}
+    </button>
+
     <button class="burger" @click="toggleMenu">
       <img
         v-if="!menuOpen"
@@ -18,24 +22,32 @@
     </button>
 
     <div class="navbar-links" :class="{ open: menuOpen }">
-      <router-link to="/" @click="closeMenu">Home</router-link>
-      <router-link to="/myworkouts" @click="closeMenu">My Workouts</router-link>
-      <router-link to="/profile" @click="closeMenu">Profile</router-link>
-      <button v-if="user" @click="logoutAndClose">Logout</button>
-      <router-link v-else to="/login" @click="closeMenu">Login</router-link>
+      <router-link to="/" @click="closeMenu">{{ $t('home') }}</router-link>
+      <router-link to="/myworkouts" @click="closeMenu">{{ $t('myWorkouts') }}</router-link>
+      <router-link to="/profile" @click="closeMenu">{{ $t('profile') }}</router-link>
+      <button v-if="user" @click="logoutAndClose">{{ $t('logout') }}</button>
+      <router-link v-else to="/login" @click="closeMenu">{{ $t('login') }}</router-link>
     </div>
   </nav>
 </template>
 
-
 <script setup>
-import { ref } from 'vue'
-import { useAuth } from '../composables/useAuth'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuth } from '../composables/useAuth'
+import { useI18n } from 'vue-i18n'
 
 const { user, logout } = useAuth()
 const router = useRouter()
 const menuOpen = ref(false)
+
+const { locale } = useI18n()
+const currentLang = computed(() => locale.value)
+
+const toggleLanguage = () => {
+  locale.value = locale.value === 'en' ? 'ro' : 'en'
+  localStorage.setItem('language', locale.value)
+}
 
 const toggleMenu = () => (menuOpen.value = !menuOpen.value)
 const closeMenu = () => (menuOpen.value = false)
@@ -72,6 +84,22 @@ const logoutAndClose = async () => {
   flex-shrink: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.lang-btn {
+  background: none;
+  border: 1px solid #ffa500;
+  color: #ffa500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.lang-btn:hover {
+  background: #ffa500;
+  color: black;
 }
 
 .navbar-links {
@@ -119,8 +147,6 @@ const logoutAndClose = async () => {
   }
 }
 
-
-/* Burger inside flex flow */
 .burger {
   display: none;
   cursor: pointer;
@@ -158,7 +184,6 @@ const logoutAndClose = async () => {
   opacity: 0.8;
 }
 
-/* Responsive Navbar */
 @media (max-width: 1024px) {
   .burger {
     display: block;

@@ -1,0 +1,14 @@
+{
+    "welcome": "Welcome to Workout Tracker",
+    "intro": "Track your workouts, log your progress, and stay consistent with your fitness goals. Whether you're training for strength, endurance, or aesthetics — this app helps you stay organized and motivated every step of the way.",
+    "feature1": "💪 Create detailed workouts with sets, reps, and weights.",
+    "feature2": "📈 Review your previous sessions to measure progress.",
+    "cta": "Start now — and take control of your training!",
+    "registerNow": "Register Now",
+    "home": "Home",
+    "myWorkouts": "My Workouts",
+    "profile": "Profile",
+    "login": "Login",
+    "logout": "Logout"
+  }
+  
