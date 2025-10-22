@@ -80,26 +80,25 @@ onUnmounted(() => clearInterval(intervalId))
 <style scoped>
 .home-container {
   position: relative;
-  height: 100svh;
-  overflow: hidden;
+  min-height: 100svh;
+  overflow-y: auto;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   color: white;
-  padding-top: 70px;
+  padding-top: 80px;
+  padding-bottom: 80px;
   box-sizing: border-box;
 }
 
 .background-image {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   transition: opacity 1.5s ease-in-out;
   z-index: 0;
-  height: 100%;
-  width: 100%;
 }
 
 .fade-enter-active,
@@ -121,7 +120,7 @@ onUnmounted(() => clearInterval(intervalId))
   max-width: 600px;
   width: 90%;
   text-align: center;
-  margin-top: 10px;
+  margin: auto;
   box-sizing: border-box;
 }
 
@@ -154,17 +153,19 @@ onUnmounted(() => clearInterval(intervalId))
 .register-btn:hover {
   background-color: #ae7202;
 }
+
 @media (max-width: 768px) {
   .overlay {
     width: 88%;
     max-width: 360px;
-    padding: 20px 16px;
-    margin-top: 60px;
+    padding: 24px 18px;
+    margin: 60px auto;
   }
 
   .home-container {
+    padding-top: 80px;
+    padding-bottom: 80px;
     align-items: flex-start;
-    padding-top: 70px;
   }
 }
 </style>
