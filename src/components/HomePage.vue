@@ -10,28 +10,25 @@
 
     <div class="overlay">
       <h1 class="title">
-        Welcome to Workout Tracker<span v-if="nickname">, {{ nickname }}</span>
+        {{ $t('welcomeTitle') }}
+        <span v-if="nickname">, {{ nickname }}</span>
       </h1>
-      <p>
-        Track your workouts, log your progress, and stay consistent with your fitness goals.
-        Whether you're training for strength, endurance, or aesthetics — this app helps you
-        stay organized and motivated every step of the way.
-      </p>
+      <p>{{ $t('welcomeText') }}</p>
 
       <div class="features">
-        <p>💪 Create detailed workouts with sets, reps, and weights.</p>
-        <p>📈 Review your previous sessions to measure progress.</p>
+        <p>💪 {{ $t('createWorkoutsText') }}</p>
+        <p>📈 {{ $t('reviewSessionsText') }}</p>
       </div>
 
-      <p class="cta">Start now — and take control of your training!</p>
+      <p class="cta">{{ $t('startNowText') }}</p>
 
       <div class="register-btn-container" v-if="!user">
-        <router-link to="/login" class="register-btn">Register Now</router-link>
+        <router-link to="/login" class="register-btn">{{ $t('registerNow') }}</router-link>
       </div>
     </div>
 
     <div v-if="user" class="recommended-section">
-      <h2>🔥 Recommended Workouts</h2>
+      <h2>🔥 {{ $t('recommendedWorkouts') }}</h2>
       <div class="workout-list">
         <div
           v-for="(workout, index) in recommendedWorkouts"
@@ -45,7 +42,7 @@
             </li>
           </ul>
           <button @click="startWorkout(workout)" class="start-btn">
-            Start Workout
+            {{ $t('startWorkout') }}
           </button>
         </div>
       </div>
@@ -54,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { db } from '../firebase'
 import { useAuth } from '../composables/useAuth'
 import { addDoc, collection, doc, getDoc } from 'firebase/firestore'
@@ -64,13 +61,13 @@ const { user } = useAuth()
 const router = useRouter()
 const nickname = ref('')
 
-onMounted(async () => {
-  if (user.value) {
-    const userRef = doc(db, 'users', user.value.uid)
+watch(user, async (u) => {
+  if (u) {
+    const userRef = doc(db, 'users', u.uid)
     const userSnap = await getDoc(userRef)
     if (userSnap.exists()) nickname.value = userSnap.data().nickname || ''
   }
-})
+}, { immediate: true })
 
 const backgroundImages = ['/arnoldGym.jpg', '/ronnieColeman.jpg', '/jayCutler.jpg']
 const currentImage = ref(0)
@@ -124,6 +121,7 @@ const startWorkout = async (workout) => {
   }
 }
 </script>
+
 <style scoped>
 .home-container {
   position: relative;
@@ -212,7 +210,7 @@ const startWorkout = async (workout) => {
   justify-content: center;
   align-items: stretch;
   gap: 25px;
-  flex-wrap: nowrap; 
+  flex-wrap: nowrap;
 }
 
 .workout-card {
@@ -258,38 +256,17 @@ const startWorkout = async (workout) => {
   background: #157347;
 }
 
-.overlay,
-.recommended-section {
-  box-sizing: border-box;
-}
-
-@media (max-width: 640px) {
-  .home-container {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  .overlay {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  .recommended-section {
-    width: 100%;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-}
-
 @media (max-width: 768px) {
   .overlay {
-    width: 94%;
+    width: 88%;
     padding: 24px 18px;
-    margin: 16px auto;
+    margin: 20px auto;
   }
 
   .recommended-section {
-    width: 94%;
+    width: 88%;
     padding: 24px 18px;
-    margin-top: 20px;
+    margin-top: 25px;
   }
 
   .workout-list {
@@ -303,4 +280,3 @@ const startWorkout = async (workout) => {
   }
 }
 </style>
-

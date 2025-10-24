@@ -66,6 +66,13 @@
     "workoutUpdated": "Workout updated!",
     "workoutDeleted": "Workout deleted!",
     "confirmDeleteWorkout": "Are you sure you want to delete this workout?",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "welcomeTitle": "Welcome to Workout Tracker",
+    "welcomeText": "Track your workouts, log your progress, and stay consistent with your fitness goals. Whether you're training for strength, endurance, or aesthetics — this app helps you stay organized and motivated every step of the way.",
+    "createWorkoutsText": "Create detailed workouts with sets, reps, and weights.",
+    "reviewSessionsText": "Review your previous sessions to measure progress.",
+    "startNowText": "Start now — and take control of your training!",
+    "recommendedWorkouts": "Recommended Workouts",
+    "startWorkout": "Start Workout"
   }
   

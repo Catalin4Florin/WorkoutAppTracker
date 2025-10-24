@@ -66,6 +66,14 @@
 "workoutUpdated": "Antrenament actualizat!",
 "workoutDeleted": "Antrenament șters!",
 "confirmDeleteWorkout": "Ești sigur că vrei să ștergi acest antrenament?",
-"confirm": "Confirmă"
+"confirm": "Confirmă",
+  "welcomeTitle": "Bun venit la Workout Tracker",
+  "welcomeText": "Urmărește-ți antrenamentele, notează-ți progresul și rămâi consecvent cu obiectivele tale de fitness. Indiferent dacă te antrenezi pentru forță, rezistență sau estetică — această aplicație te ajută să rămâi organizat și motivat la fiecare pas.",
+  "createWorkoutsText": "Creează antrenamente detaliate cu serii, repetări și greutăți.",
+  "reviewSessionsText": "Revizuiește sesiunile anterioare pentru a-ți măsura progresul.",
+  "startNowText": "Începe acum — și preia controlul asupra antrenamentului tău!",
+  "recommendedWorkouts": "Antrenamente recomandate",
+  "startWorkout": "Începe antrenamentul"
+
   }
   
