@@ -9,7 +9,9 @@
     </transition>
 
     <div class="overlay">
-      <h1 class="title">Welcome to Workout Tracker</h1>
+      <h1 class="title">
+        Welcome to Workout Tracker<span v-if="nickname">, {{ nickname }}</span>
+      </h1>
       <p>
         Track your workouts, log your progress, and stay consistent with your fitness goals.
         Whether you're training for strength, endurance, or aesthetics — this app helps you
@@ -55,11 +57,20 @@
 import { ref, onMounted } from 'vue'
 import { db } from '../firebase'
 import { useAuth } from '../composables/useAuth'
-import { addDoc, collection } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
 
 const { user } = useAuth()
 const router = useRouter()
+const nickname = ref('')
+
+onMounted(async () => {
+  if (user.value) {
+    const userRef = doc(db, 'users', user.value.uid)
+    const userSnap = await getDoc(userRef)
+    if (userSnap.exists()) nickname.value = userSnap.data().nickname || ''
+  }
+})
 
 const backgroundImages = ['/arnoldGym.jpg', '/ronnieColeman.jpg', '/jayCutler.jpg']
 const currentImage = ref(0)
