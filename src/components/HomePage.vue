@@ -124,7 +124,6 @@ const startWorkout = async (workout) => {
   }
 }
 </script>
-
 <style scoped>
 .home-container {
   position: relative;
@@ -259,16 +258,49 @@ const startWorkout = async (workout) => {
   background: #157347;
 }
 
-@media (max-width: 900px) {
-  .workout-list {
-    flex-wrap: wrap;
+.overlay,
+.recommended-section {
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .home-container {
+    padding-left: 12px;
+    padding-right: 12px;
   }
-  .workout-card {
-    width: 90%;
-    max-width: 400px;
+  .overlay {
+    padding-left: 12px;
+    padding-right: 12px;
   }
   .recommended-section {
-    padding: 20px;
+    width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .overlay {
+    width: 94%;
+    padding: 24px 18px;
+    margin: 16px auto;
+  }
+
+  .recommended-section {
+    width: 94%;
+    padding: 24px 18px;
+    margin-top: 20px;
+  }
+
+  .workout-list {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .workout-card {
+    width: 100%;
+    max-width: 320px;
   }
 }
 </style>
+

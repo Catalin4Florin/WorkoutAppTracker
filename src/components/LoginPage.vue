@@ -48,7 +48,7 @@ const handleLogin = async () => {
     showPopup.value = true
     setTimeout(() => {
       showPopup.value = false
-      router.push('/myworkouts')
+      router.push('/')
     }, 1500)
   } catch (e) {
     error.value = e.message
